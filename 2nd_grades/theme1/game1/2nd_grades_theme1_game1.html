@@ -32,8 +32,9 @@
         .btn {
             padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; margin: 5px;
         }
+        .btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
         .btn-basla { background-color: #2563eb; color: white; width: 100%; margin-top: 10px; }
-        .btn-basla:hover { background-color: #1d4ed8; }
+        .btn-basla:hover:not(:disabled) { background-color: #1d4ed8; }
         .btn-dinle { background-color: #0ea5e9; color: white; font-size: 18px; padding: 14px 28px; }
         .btn-dinle:hover { background-color: #0284c7; }
         .btn-kontrol { background-color: #10b981; color: white; }
@@ -44,61 +45,50 @@
         /* Oyun Alanı */
         .ust-bilgi { display: flex; justify-content: space-between; font-size: 14px; color: #64748b; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
         
-        /* Karışık Kelimeler Havuzu */
         .kelime-havuzu {
-            min-height: 70px;
-            padding: 15px;
-            background-color: #f8fafc;
-            border-radius: 10px;
-            margin: 20px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
+            min-height: 70px; padding: 15px; background-color: #f8fafc; border-radius: 10px; margin: 20px 0;
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center;
         }
 
-        /* Çizgi / Cümle Kurma Alanı */
         .cizgi-alani-baslik { font-size: 13px; color: #64748b; margin-bottom: 5px; text-align: left; }
         .cizgi-alani {
-            min-height: 75px;
-            padding: 15px;
-            border-bottom: 3px solid #334155;
-            background-color: #fffbeb;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
+            min-height: 75px; padding: 15px; border-bottom: 3px solid #334155; background-color: #fffbeb;
+            border-radius: 8px 8px 0 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-bottom: 20px;
         }
 
-        /* Kelime Kutucukları */
         .kelime-kutu {
-            background-color: white;
-            border: 2px solid #94a3b8;
-            color: #1e293b;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: grab;
-            user-select: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.1s, background-color 0.2s;
+            background-color: white; border: 2px solid #94a3b8; color: #1e293b; padding: 10px 16px;
+            border-radius: 8px; font-size: 18px; font-weight: 600; cursor: grab; user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.1s, background-color 0.2s;
         }
         .kelime-kutu:active { cursor: grabbing; transform: scale(0.95); }
         
-        /* Kontrol Renkleri */
         .dogru-kelime { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; }
         .yanlis-kelime { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
 
+        .yildiz-kutusu { font-size: 52px; margin: 15px 0; letter-spacing: 8px; animation: popIn 0.5s ease; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .kayit-bilgi { font-size: 13px; color: #15803d; background: #dcfce7; padding: 10px; border-radius: 8px; margin: 15px 0; border: 1px solid #86efac; }
         .mesaj { font-weight: bold; font-size: 16px; min-height: 24px; margin: 10px 0; }
         .gizli { display: none; }
     </style>
 </head>
 <body>
+
+<!-- NETLIFY ORTAK FORM ŞABLONU (Tüm oyunlarınızda birebir aynı kalmalı) -->
+<form name="oynayanlar" netlify netlify-honeypot="bot-field" hidden>
+    <input type="text" name="oyun_adi" />
+    <input type="text" name="ogrenci_adi" />
+    <input type="text" name="sinifi" />
+    <input type="text" name="puan" />
+    <input type="text" name="yildiz" />
+    <input type="text" name="tarih_saat" />
+</form>
 
 <div class="kart">
     <!-- 1. GİRİŞ EKRANI -->
@@ -107,13 +97,13 @@
         <p style="color: #64748b;">Başlamadan önce bilgilerini gir.</p>
         <div class="input-grup">
             <label for="ogrenciAd">Adın ve Soyadın:</label>
-            <input type="text" id="ogrenciAd" placeholder="Örn: Ali Yılmaz">
+            <input type="text" id="ogrenciAd" placeholder="Örn: Ali Demir" onkeydown="enterKontrol(event)">
         </div>
         <div class="input-grup">
             <label for="ogrenciSinif">Sınıfın:</label>
-            <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A">
+            <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A" onkeydown="enterKontrol(event)">
         </div>
-        <button class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
+        <button id="baslaBtn" class="btn btn-basla" onclick="oyunuBaslat()" disabled>Yükleniyor...</button>
     </div>
 
     <!-- 2. OYUN EKRANI -->
@@ -126,10 +116,8 @@
 
         <button class="btn btn-dinle" onclick="cumleyiDinle()">🔊 Listen / Dinle</button>
 
-        <!-- Karışık Kelimelerin Olduğu Yer -->
         <div id="havuzAlani" class="kelime-havuzu" ondragover="izinVer(event)" ondrop="birak(event, 'havuzAlani')"></div>
 
-        <!-- Kelimelerin Dizileceği Çizgi -->
         <div class="cizgi-alani-baslik">Kelimeleri sırayla aşağıdaki çizginin üzerine sürükle veya tıkla:</div>
         <div id="cizgiAlani" class="cizgi-alani" ondragover="izinVer(event)" ondrop="birak(event, 'cizgiAlani')"></div>
 
@@ -142,44 +130,73 @@
     <!-- 3. SONUÇ EKRANI -->
     <div id="sonucEkrani" class="gizli">
         <h2>🎉 Tebrikler!</h2>
+        <div id="yildizAlani" class="yildiz-kutusu"></div>
         <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
+        <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
         <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
     </div>
 </div>
 
 <script>
+    // BU OYUNUN ADI (Diğer 9 oyunda sadece bu satırı değiştirin)
+    const OYUNUN_ADI = "Dinle ve Cümle Kur";
+
     let cumleListesi = [];
     let mevcutIndex = 0;
     let puan = 0;
+    let denemeSayisi = 0;
     let ogrenciAdi = "";
     let ogrenciSinifi = "";
     let suruklenenKutu = null;
     let aktifSes = null;
 
-    // Sayfa açıldığında sentences.txt dosyasını arka planda oku
     window.onload = async function() {
+        const baslaBtn = document.getElementById("baslaBtn");
         try {
             const yanit = await fetch('sentences.txt');
             if (!yanit.ok) throw new Error("Dosya bulunamadı");
             const metin = await yanit.text();
             
-            // Satırlara böl, boş satırları at ve başındaki "1-", "2." gibi numaraları temizle
             cumleListesi = metin.split('\n')
                 .map(satir => satir.replace(/^\d+[\-\.\)]\s*/, '').trim())
                 .filter(satir => satir.length > 0);
 
+            if (cumleListesi.length === 0) throw new Error("Dosya boş");
+
         } catch (hata) {
-            console.warn("sentences.txt okunamadı (yerel dosya kısıtlaması olabilir), yedek cümleler yüklendi.");
             cumleListesi = [
-                "what is this ?",
-                "this is a playground",
-                "what is your name ?",
-                "nice to meet you",
-                "where is the pupil ?",
-                "He is in the classroom"
+                "What is this?",
+                "This is a playground.",
+                "What is your name?",
+                "Nice to meet you.",
+                "Where is the pupil?",
+                "He is in the classroom."
             ];
+        } finally {
+            baslaBtn.disabled = false;
+            baslaBtn.innerText = "Başla ▶";
         }
     };
+
+    function enterKontrol(e) {
+        if (e.key === "Enter") oyunuBaslat();
+    }
+
+    function kelimelereAyir(cumle) {
+        return cumle.replace(/([?.!,])/g, " $1 ").trim().split(/\s+/);
+    }
+
+    function diziyiKaristir(dizi) {
+        const kopya = [...dizi];
+        for (let i = kopya.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [kopya[i], kopya[j]] = [kopya[j], kopya[i]];
+        }
+        if (kopya.join(" ") === dizi.join(" ") && kopya.length > 1) {
+            return diziyiKaristir(dizi);
+        }
+        return kopya;
+    }
 
     function oyunuBaslat() {
         ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
@@ -206,19 +223,14 @@
         havuz.innerHTML = "";
         cizgi.innerHTML = "";
         mesaj.innerText = "";
+        denemeSayisi = 0;
+
         document.getElementById("soruNo").innerText = mevcutIndex + 1;
         document.getElementById("kontrolBtn").style.display = "inline-block";
         document.getElementById("sonrakiBtn").style.display = "none";
 
-        // Cümleyi kelimelere böl ve karıştır
-        const dogruCumle = cumleListesi[mevcutIndex];
-        let kelimeler = dogruCumle.split(/\s+/);
-        let karisikKelimeler = [...kelimeler].sort(() => Math.random() - 0.5);
-
-        // Eğer şans eseri kelimeler hiç karışmadıysa tekrar karıştır
-        if (karisikKelimeler.join(" ") === kelimeler.join(" ") && kelimeler.length > 1) {
-            karisikKelimeler.reverse();
-        }
+        const kelimeler = kelimelereAyir(cumleListesi[mevcutIndex]);
+        const karisikKelimeler = diziyiKaristir(kelimeler);
 
         karisikKelimeler.forEach((kelime, index) => {
             const kutu = document.createElement("div");
@@ -227,15 +239,10 @@
             kutu.draggable = true;
             kutu.id = "kelime-" + index;
 
-            // Sürükleme olayları
-            kutu.ondragstart = function(e) {
-                suruklenenKutu = kutu;
-            };
+            kutu.ondragstart = function() { suruklenenKutu = kutu; };
 
-            // Tıklama olayı (Mobil ve hızlı kullanım için)
             kutu.onclick = function() {
                 if (document.getElementById("kontrolBtn").style.display === "none") return;
-
                 if (kutu.parentElement.id === "havuzAlani") {
                     cizgi.appendChild(kutu);
                 } else {
@@ -246,44 +253,37 @@
 
             havuz.appendChild(kutu);
         });
+
+        setTimeout(cumleyiDinle, 300);
     }
 
-    // Sürükle-Bırak Yardımcı Fonksiyonları
-    function izinVer(e) {
-        e.preventDefault();
-    }
+    function izinVer(e) { e.preventDefault(); }
 
     function birak(e, hedefId) {
         e.preventDefault();
         if (document.getElementById("kontrolBtn").style.display === "none") return;
         if (suruklenenKutu) {
-            document.getElementById(hedefId).appendChild(suruklenenKutu);
+            const hedefAlan = document.getElementById(hedefId);
+            if (e.target.classList.contains("kelime-kutu") && e.target !== suruklenenKutu) {
+                hedefAlan.insertBefore(suruklenenKutu, e.target);
+            } else {
+                hedefAlan.appendChild(suruklenenKutu);
+            }
             suruklenenKutu.classList.remove("dogru-kelime", "yanlis-kelime");
             suruklenenKutu = null;
         }
     }
 
-    // Seslendirme Fonksiyonu: Önce sesler/1.mp3 gibi dosyayı dener, yoksa tarayıcı sesini kullanır
     function cumleyiDinle() {
         window.speechSynthesis.cancel();
         if (aktifSes) {
             aktifSes.pause();
             aktifSes.currentTime = 0;
         }
-
-        const soruNumarasi = mevcutIndex + 1;
-        const mp3Yolu = `sesler/${soruNumarasi}.mp3`;
-        
+        const mp3Yolu = `sesler/${mevcutIndex + 1}.mp3`;
         aktifSes = new Audio(mp3Yolu);
-        
-        // MP3 dosyası bulunamazsa veya yüklenemezse yedek tarayıcı sesine geç
-        aktifSes.onerror = function() {
-            tarayiciSesiyleOku();
-        };
-
-        aktifSes.play().catch(function() {
-            tarayiciSesiyleOku();
-        });
+        aktifSes.onerror = tarayiciSesiyleOku;
+        aktifSes.play().catch(tarayiciSesiyleOku);
     }
 
     function tarayiciSesiyleOku() {
@@ -293,10 +293,50 @@
         window.speechSynthesis.speak(metin);
     }
 
+    function neseliDingCal(dogruMu) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const simdi = ctx.currentTime;
+
+            if (dogruMu) {
+                const notalar = [659.25, 783.99, 1046.50]; 
+                notalar.forEach((frekans, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(frekans, simdi + i * 0.11);
+
+                    gain.gain.setValueAtTime(0.001, simdi + i * 0.11);
+                    gain.gain.exponentialRampToValueAtTime(0.35, simdi + i * 0.11 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.11 + 0.55);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(simdi + i * 0.11);
+                    osc.stop(simdi + i * 0.11 + 0.6);
+                });
+            } else {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, simdi);
+                osc.frequency.linearRampToValueAtTime(150, simdi + 0.25);
+
+                gain.gain.setValueAtTime(0.25, simdi);
+                gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.3);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(simdi);
+                osc.stop(simdi + 0.3);
+            }
+        } catch (e) {}
+    }
+
     function cevabiKontrolEt() {
         const cizgi = document.getElementById("cizgiAlani");
         const dizilenKutular = Array.from(cizgi.children);
-        const dogruKelimeler = cumleListesi[mevcutIndex].split(/\s+/);
+        const dogruKelimeler = kelimelereAyir(cumleListesi[mevcutIndex]);
         const mesaj = document.getElementById("mesajAlani");
 
         if (dizilenKutular.length === 0) {
@@ -305,6 +345,7 @@
             return;
         }
 
+        denemeSayisi++;
         let tamDogruMu = true;
 
         dizilenKutular.forEach((kutu, index) => {
@@ -322,13 +363,16 @@
         }
 
         if (tamDogruMu) {
+            neseliDingCal(true);
+            const kazanilanPuan = denemeSayisi === 1 ? 10 : 5;
+            puan += kazanilanPuan;
             mesaj.style.color = "#16a34a";
-            mesaj.innerText = "Harika! Cümleyi doğru kurdun.";
-            puan += 10;
+            mesaj.innerText = `Harika! Doğru kurdun (+${kazanilanPuan} puan).`;
             document.getElementById("puan").innerText = puan;
             document.getElementById("kontrolBtn").style.display = "none";
             document.getElementById("sonrakiBtn").style.display = "inline-block";
         } else {
+            neseliDingCal(false);
             mesaj.style.color = "#dc2626";
             mesaj.innerText = "Kırmızı kutucukların yerini değiştirip tekrar dene!";
         }
@@ -339,13 +383,69 @@
         if (mevcutIndex < cumleListesi.length) {
             soruyuHazirla();
         } else {
-            document.getElementById("oyunEkrani").classList.add("gizli");
-            document.getElementById("sonucEkrani").classList.remove("gizli");
-            document.getElementById("sonucMetni").innerHTML = `
-                <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
-                Oyunu tamamladın!<br>
-                Toplam Puanın: <strong>${puan} / ${cumleListesi.length * 10}</strong>
-            `;
+            oyunuBitir();
+        }
+    }
+
+    async function oyunuBitir() {
+        document.getElementById("oyunEkrani").classList.add("gizli");
+        document.getElementById("sonucEkrani").classList.remove("gizli");
+
+        const maksimumPuan = cumleListesi.length * 10;
+        const basariYuzdesi = (puan / maksimumPuan) * 100;
+
+        let yildizSayisi = 1;
+        let yildizMesaji = "Güzel çaba! Biraz daha pratikle harika olacaksın.";
+        if (basariYuzdesi >= 80) {
+            yildizSayisi = 3;
+            yildizMesaji = "Mükemmel! Tam bir yıldız öğrencisin!";
+        } else if (basariYuzdesi >= 50) {
+            yildizSayisi = 2;
+            yildizMesaji = "Çok iyi iş çıkardın!";
+        }
+
+        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
+        document.getElementById("sonucMetni").innerHTML = `
+            <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
+            ${yildizMesaji}<br>
+            Toplam Puanın: <strong>${puan} / ${maksimumPuan}</strong>
+        `;
+
+        await netlifyKaydet(maksimumPuan, yildizSayisi);
+    }
+
+    async function netlifyKaydet(maksimumPuan, yildizSayisi) {
+        const simdi = new Date();
+        const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " + 
+                          simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const durumKutusu = document.getElementById("kayitDurumu");
+
+        const formData = new URLSearchParams();
+        formData.append("form-name", "oynayanlar");
+        formData.append("oyun_adi", OYUNUN_ADI);
+        formData.append("ogrenci_adi", ogrenciAdi);
+        formData.append("sinifi", ogrenciSinifi);
+        formData.append("puan", `${puan} / ${maksimumPuan}`);
+        formData.append("yildiz", `${yildizSayisi} Yıldız`);
+        formData.append("tarih_saat", tarihSaat);
+
+        try {
+            const yanit = await fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData.toString()
+            });
+
+            if (yanit.ok) {
+                durumKutusu.innerHTML = `✅ Tebrikler! Sonucun başarıyla kaydedildi.`;
+            } else {
+                throw new Error("Sunucu yanıt vermedi");
+            }
+        } catch (err) {
+            durumKutusu.style.background = "#fef3c7";
+            durumKutusu.style.color = "#92400e";
+            durumKutusu.style.borderColor = "#fcd34d";
+            durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
         }
     }
 </script>
