@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Lingo — English Learning Adventures</title>
+    <style>
+        :root {
+            --bg-color: #FFFDF7;
+            --primary: #FF7A59;
+            --secondary: #4ECDC4;
+            --accent: #FFD166;
+            --purple: #845EC2;
+            --text-dark: #2D3142;
+            --text-light: #6C757D;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, .logo {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-weight: 700;
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 1.2rem 5%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 1.5rem 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #FFF3D1;
+            color: #D98200;
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .grade-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .grade-btn {
+            background: var(--card-bg);
+            border: 3px solid #EAEAEA;
+            border-radius: 24px;
+            padding: 1.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+        }
+
+        .grade-btn:hover {
+            transform: translateY(-5px);
+        }
+
+        .grade-btn.active.g2 { border-color: var(--primary); background: #FFF5F2; }
+        .grade-btn.active.g3 { border-color: var(--secondary); background: #F0FBF9; }
+        .grade-btn.active.g4 { border-color: var(--purple); background: #F6F2FC; }
+
+        .grade-tag {
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .g2 .grade-tag { background: var(--primary); }
+        .g3 .grade-tag { background: var(--secondary); }
+        .g4 .grade-tag { background: var(--purple); }
+
+        .grade-btn h3 {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .grade-btn p {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .units-area {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .units-area.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .unit-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 2px solid #F1F1F1;
+        }
+
+        .unit-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed #EEEEEE;
+        }
+
+        .unit-badge {
+            background: var(--accent);
+            color: var(--text-dark);
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .game-card {
+            background: #FAFAFA;
+            border: 2px solid #EAEAEA;
+            border-radius: 18px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .game-card:hover {
+            border-color: var(--secondary);
+            background: #FFFFFF;
+            transform: translateY(-3px);
+        }
+
+        .game-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .game-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .play-btn {
+            display: inline-block;
+            text-align: center;
+            background: var(--secondary);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 0.8rem 1.2rem;
+            border-radius: 14px;
+            transition: background 0.2s;
+        }
+
+        .play-btn:hover {
+            background: #3DBBB2;
+        }
+
+        .play-btn.coming-soon {
+            background: #E0E0E0;
+            color: #888888;
+            pointer-events: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            border-top: 1px solid #EEEEEE;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">little <span>lingo.</span></a>
+        <div style="font-weight: 700; color: var(--text-light);">English Learning Adventures</div>
+    </header>
+
+    <section class="hero">
+        <div class="badge">✨ YOUR ENGLISH ADVENTURE STARTS HERE</div>
+        <h1>Little games. Big discoveries.</h1>
+        <p>Pick your grade, find your unit, and let's play!</p>
+    </section>
+
+    <main class="container">
+        <h2 class="section-title">Choose your grade</h2>
+
+        <div class="grade-selector">
+            <div class="grade-btn g2 active" onclick="selectGrade('grade2', this)">
+                <div class="grade-tag">2nd Grade</div>
+                <h3>Little Explorers</h3>
+                <p>Themes &amp; Fun Games</p>
+            </div>
+
+            <div class="grade-btn g3" onclick="selectGrade('grade3', this)">
+                <div class="grade-tag">3rd Grade</div>
+                <h3>Curious Thinkers</h3>
+                <p>Units &amp; Word Challenges</p>
+            </div>
+
+            <div class="grade-btn g4" onclick="selectGrade('grade4', this)">
+                <div class="grade-tag">4th Grade</div>
+                <h3>Growing Adventurers</h3>
+                <p>Units &amp; Sentence Games</p>
+            </div>
+        </div>
+
+        <div id="grade2" class="units-area active">
+            <div class="unit-card">
+                <div class="unit-header">
+                    <span class="unit-badge">THEME 1</span>
+                    <h3>School Life &amp; Words</h3>
+                </div>
+                <div class="games-grid">
+                    <div class="game-card">
+                        <div>
+                            <h4>Game 1 · Audio &amp; Word Match</h4>
+                            <p>Listen carefully and find the correct answer!</p>
+                        </div>
+                        <a href="2nd_grades/theme1/game1/2nd_grades_theme1_game1.html" class="play-btn">▶ Play Game 1</a>
+                    </div>
+
+                    <div class="game-card">
+                        <div>
+                            <h4>Game 2 · Coming Soon</h4>
+                            <p>New adventure is being prepared for you.</p>
+                        </div>
+                        <a href="#" class="play-btn coming-soon">Soon...</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="grade3" class="units-area">
+            <div class="unit-card">
+                <div class="unit-header">
+                    <span class="unit-badge">UNIT 1</span>
+                    <h3>Greeting &amp; Numbers</h3>
+                </div>
+                <div class="games-grid">
+                    <div class="game-card">
+                        <div>
+                            <h4>Game 1 · Coming Soon</h4>
+                            <p>New games for 3rd graders are on the way!</p>
+                        </div>
+                        <a href="#" class="play-btn coming-soon">Soon...</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="grade4" class="units-area">
+            <div class="unit-card">
+                <div class="unit-header">
+                    <span class="unit-badge">UNIT 1</span>
+                    <h3>Classroom Rules</h3>
+                </div>
+                <div class="games-grid">
+                    <div class="game-card">
+                        <div>
+                            <h4>Game 1 · Sentence Builder</h4>
+                            <p>Listen and practice classroom expressions!</p>
+                        </div>
+                        <a href="4th_grades/unit1/game1/4th_grades_unit1_game1.html" class="play-btn">▶ Play Game 1</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p><strong>little lingo.</strong> — Made for curious minds and little victories. Keep learning. Keep smiling! 🌟</p>
+    </footer>
+
+    <script>
+        function selectGrade(gradeId, clickedElement) {
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            clickedElement.classList.add('active');
+
+            document.querySelectorAll('.units-area').forEach(area => {
+                area.classList.remove('active');
+            });
+            document.getElementById(gradeId).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İngilizce Dinle ve Sırala Oyunu</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        
+        .kart {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 { color: #1e293b; margin-top: 0; }
+        
+        /* Giriş Ekranı */
+        .input-grup { margin-bottom: 15px; text-align: left; }
+        .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; }
+        .input-grup input {
+            width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px;
+        }
+        .input-grup input:focus { border-color: #3b82f6; outline: none; }
+
+        /* Butonlar */
+        .btn {
+            padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; margin: 5px;
+        }
+        .btn-basla { background-color: #2563eb; color: white; width: 100%; margin-top: 10px; }
+        .btn-basla:hover { background-color: #1d4ed8; }
+        .btn-dinle { background-color: #0ea5e9; color: white; font-size: 18px; padding: 14px 28px; }
+        .btn-dinle:hover { background-color: #0284c7; }
+        .btn-kontrol { background-color: #10b981; color: white; }
+        .btn-kontrol:hover { background-color: #059669; }
+        .btn-sonraki { background-color: #6366f1; color: white; display: none; }
+        .btn-sonraki:hover { background-color: #4f46e5; }
+
+        /* Oyun Alanı */
+        .ust-bilgi { display: flex; justify-content: space-between; font-size: 14px; color: #64748b; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        
+        /* Karışık Kelimeler Havuzu */
+        .kelime-havuzu {
+            min-height: 70px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Çizgi / Cümle Kurma Alanı */
+        .cizgi-alani-baslik { font-size: 13px; color: #64748b; margin-bottom: 5px; text-align: left; }
+        .cizgi-alani {
+            min-height: 75px;
+            padding: 15px;
+            border-bottom: 3px solid #334155;
+            background-color: #fffbeb;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Kelime Kutucukları */
+        .kelime-kutu {
+            background-color: white;
+            border: 2px solid #94a3b8;
+            color: #1e293b;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: grab;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .kelime-kutu:active { cursor: grabbing; transform: scale(0.95); }
+        
+        /* Kontrol Renkleri */
+        .dogru-kelime { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; }
+        .yanlis-kelime { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
+
+        .mesaj { font-weight: bold; font-size: 16px; min-height: 24px; margin: 10px 0; }
+        .gizli { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="kart">
+    <!-- 1. GİRİŞ EKRANI -->
+    <div id="girisEkrani">
+        <h2>🎧 Dinle ve Cümle Kur</h2>
+        <p style="color: #64748b;">Başlamadan önce bilgilerini gir.</p>
+        <div class="input-grup">
+            <label for="ogrenciAd">Adın ve Soyadın:</label>
+            <input type="text" id="ogrenciAd" placeholder="Örn: Ali Yılmaz">
+        </div>
+        <div class="input-grup">
+            <label for="ogrenciSinif">Sınıfın:</label>
+            <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A">
+        </div>
+        <button class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
+    </div>
+
+    <!-- 2. OYUN EKRANI -->
+    <div id="oyunEkrani" class="gizli">
+        <div class="ust-bilgi">
+            <span id="oyuncuBilgi">Öğrenci: -</span>
+            <span>Soru: <strong id="soruNo">1</strong> / <strong id="toplamSoru">0</strong></span>
+            <span>Puan: <strong id="puan">0</strong></span>
+        </div>
+
+        <button class="btn btn-dinle" onclick="cumleyiDinle()">🔊 Listen / Dinle</button>
+
+        <!-- Karışık Kelimelerin Olduğu Yer -->
+        <div id="havuzAlani" class="kelime-havuzu" ondragover="izinVer(event)" ondrop="birak(event, 'havuzAlani')"></div>
+
+        <!-- Kelimelerin Dizileceği Çizgi -->
+        <div class="cizgi-alani-baslik">Kelimeleri sırayla aşağıdaki çizginin üzerine sürükle veya tıkla:</div>
+        <div id="cizgiAlani" class="cizgi-alani" ondragover="izinVer(event)" ondrop="birak(event, 'cizgiAlani')"></div>
+
+        <div id="mesajAlani" class="mesaj"></div>
+
+        <button id="kontrolBtn" class="btn btn-kontrol" onclick="cevabiKontrolEt()">Kontrol Et ✔</button>
+        <button id="sonrakiBtn" class="btn btn-sonraki" onclick="sonrakiSoru()">Sonraki Cümle ➔</button>
+    </div>
+
+    <!-- 3. SONUÇ EKRANI -->
+    <div id="sonucEkrani" class="gizli">
+        <h2>🎉 Tebrikler!</h2>
+        <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
+        <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
+    </div>
+</div>
+
+<script>
+    let cumleListesi = [];
+    let mevcutIndex = 0;
+    let puan = 0;
+    let ogrenciAdi = "";
+    let ogrenciSinifi = "";
+    let suruklenenKutu = null;
+    let aktifSes = null;
+
+    // Sayfa açıldığında sentences.txt dosyasını arka planda oku
+    window.onload = async function() {
+        try {
+            const yanit = await fetch('sentences.txt');
+            if (!yanit.ok) throw new Error("Dosya bulunamadı");
+            const metin = await yanit.text();
+            
+            // Satırlara böl, boş satırları at ve başındaki "1-", "2." gibi numaraları temizle
+            cumleListesi = metin.split('\n')
+                .map(satir => satir.replace(/^\d+[\-\.\)]\s*/, '').trim())
+                .filter(satir => satir.length > 0);
+
+        } catch (hata) {
+            console.warn("sentences.txt okunamadı (yerel dosya kısıtlaması olabilir), yedek cümleler yüklendi.");
+            cumleListesi = [
+                "what is this ?",
+                "this is a playground",
+                "what is your name ?",
+                "nice to meet you",
+                "where is the pupil ?",
+                "He is in the classroom"
+            ];
+        }
+    };
+
+    function oyunuBaslat() {
+        ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
+        ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
+
+        if (!ogrenciAdi || !ogrenciSinifi) {
+            alert("Lütfen adını ve sınıfını yaz!");
+            return;
+        }
+
+        document.getElementById("girisEkrani").classList.add("gizli");
+        document.getElementById("oyunEkrani").classList.remove("gizli");
+        document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
+        document.getElementById("toplamSoru").innerText = cumleListesi.length;
+
+        soruyuHazirla();
+    }
+
+    function soruyuHazirla() {
+        const havuz = document.getElementById("havuzAlani");
+        const cizgi = document.getElementById("cizgiAlani");
+        const mesaj = document.getElementById("mesajAlani");
+
+        havuz.innerHTML = "";
+        cizgi.innerHTML = "";
+        mesaj.innerText = "";
+        document.getElementById("soruNo").innerText = mevcutIndex + 1;
+        document.getElementById("kontrolBtn").style.display = "inline-block";
+        document.getElementById("sonrakiBtn").style.display = "none";
+
+        // Cümleyi kelimelere böl ve karıştır
+        const dogruCumle = cumleListesi[mevcutIndex];
+        let kelimeler = dogruCumle.split(/\s+/);
+        let karisikKelimeler = [...kelimeler].sort(() => Math.random() - 0.5);
+
+        // Eğer şans eseri kelimeler hiç karışmadıysa tekrar karıştır
+        if (karisikKelimeler.join(" ") === kelimeler.join(" ") && kelimeler.length > 1) {
+            karisikKelimeler.reverse();
+        }
+
+        karisikKelimeler.forEach((kelime, index) => {
+            const kutu = document.createElement("div");
+            kutu.className = "kelime-kutu";
+            kutu.innerText = kelime;
+            kutu.draggable = true;
+            kutu.id = "kelime-" + index;
+
+            // Sürükleme olayları
+            kutu.ondragstart = function(e) {
+                suruklenenKutu = kutu;
+            };
+
+            // Tıklama olayı (Mobil ve hızlı kullanım için)
+            kutu.onclick = function() {
+                if (document.getElementById("kontrolBtn").style.display === "none") return;
+
+                if (kutu.parentElement.id === "havuzAlani") {
+                    cizgi.appendChild(kutu);
+                } else {
+                    havuz.appendChild(kutu);
+                }
+                kutu.classList.remove("dogru-kelime", "yanlis-kelime");
+            };
+
+            havuz.appendChild(kutu);
+        });
+    }
+
+    // Sürükle-Bırak Yardımcı Fonksiyonları
+    function izinVer(e) {
+        e.preventDefault();
+    }
+
+    function birak(e, hedefId) {
+        e.preventDefault();
+        if (document.getElementById("kontrolBtn").style.display === "none") return;
+        if (suruklenenKutu) {
+            document.getElementById(hedefId).appendChild(suruklenenKutu);
+            suruklenenKutu.classList.remove("dogru-kelime", "yanlis-kelime");
+            suruklenenKutu = null;
+        }
+    }
+
+    // Seslendirme Fonksiyonu: Önce sesler/1.mp3 gibi dosyayı dener, yoksa tarayıcı sesini kullanır
+    function cumleyiDinle() {
+        window.speechSynthesis.cancel();
+        if (aktifSes) {
+            aktifSes.pause();
+            aktifSes.currentTime = 0;
+        }
+
+        const soruNumarasi = mevcutIndex + 1;
+        const mp3Yolu = `sesler/${soruNumarasi}.mp3`;
+        
+        aktifSes = new Audio(mp3Yolu);
+        
+        // MP3 dosyası bulunamazsa veya yüklenemezse yedek tarayıcı sesine geç
+        aktifSes.onerror = function() {
+            tarayiciSesiyleOku();
+        };
+
+        aktifSes.play().catch(function() {
+            tarayiciSesiyleOku();
+        });
+    }
+
+    function tarayiciSesiyleOku() {
+        const metin = new SpeechSynthesisUtterance(cumleListesi[mevcutIndex]);
+        metin.lang = 'en-US';
+        metin.rate = 0.85;
+        window.speechSynthesis.speak(metin);
+    }
+
+    function cevabiKontrolEt() {
+        const cizgi = document.getElementById("cizgiAlani");
+        const dizilenKutular = Array.from(cizgi.children);
+        const dogruKelimeler = cumleListesi[mevcutIndex].split(/\s+/);
+        const mesaj = document.getElementById("mesajAlani");
+
+        if (dizilenKutular.length === 0) {
+            mesaj.style.color = "#d97706";
+            mesaj.innerText = "Lütfen önce kelimeleri çizginin üzerine yerleştir!";
+            return;
+        }
+
+        let tamDogruMu = true;
+
+        dizilenKutular.forEach((kutu, index) => {
+            kutu.classList.remove("dogru-kelime", "yanlis-kelime");
+            if (kutu.innerText === dogruKelimeler[index]) {
+                kutu.classList.add("dogru-kelime");
+            } else {
+                kutu.classList.add("yanlis-kelime");
+                tamDogruMu = false;
+            }
+        });
+
+        if (dizilenKutular.length !== dogruKelimeler.length) {
+            tamDogruMu = false;
+        }
+
+        if (tamDogruMu) {
+            mesaj.style.color = "#16a34a";
+            mesaj.innerText = "Harika! Cümleyi doğru kurdun.";
+            puan += 10;
+            document.getElementById("puan").innerText = puan;
+            document.getElementById("kontrolBtn").style.display = "none";
+            document.getElementById("sonrakiBtn").style.display = "inline-block";
+        } else {
+            mesaj.style.color = "#dc2626";
+            mesaj.innerText = "Kırmızı kutucukların yerini değiştirip tekrar dene!";
+        }
+    }
+
+    function sonrakiSoru() {
+        mevcutIndex++;
+        if (mevcutIndex < cumleListesi.length) {
+            soruyuHazirla();
+        } else {
+            document.getElementById("oyunEkrani").classList.add("gizli");
+            document.getElementById("sonucEkrani").classList.remove("gizli");
+            document.getElementById("sonucMetni").innerHTML = `
+                <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
+                Oyunu tamamladın!<br>
+                Toplam Puanın: <strong>${puan} / ${cumleListesi.length * 10}</strong>
+            `;
+        }
+    }
+</script>
+
+</body>
+</html>

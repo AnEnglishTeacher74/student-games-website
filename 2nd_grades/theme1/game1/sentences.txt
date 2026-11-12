@@ -1,0 +1,6 @@
+1- what is this ?
+2- this is a playground
+3- what is your name ?
+4- nice to meet you
+5- where is the pupil ?
+6- He is in the classroom
