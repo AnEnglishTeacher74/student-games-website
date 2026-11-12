@@ -1,6 +1,15 @@
-1- what is this ?
+1- what is your name ?
 2- this is a playground
-3- what is your name ?
+3- what is this ?
 4- nice to meet you
 5- where is the pupil ?
 6- He is in the classroom
+7- This is my friend Ali.
+9- Who is this girl ?
+10-Where is Mrs Yalçın ?
+11-What day is it today?
+12- It is Friday today.
+13- Bobby is my friend.
+14- Mr Elfy is our teacher.
+15- How are you ?
+16- Fine thanks and you ?
