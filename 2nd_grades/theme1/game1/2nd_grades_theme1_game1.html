@@ -20,7 +20,6 @@
 
         h2 { color: #1e293b; margin-top: 0; }
         
-        /* Giriş Ekranı */
         .input-grup { margin-bottom: 15px; text-align: left; }
         .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; }
         .input-grup input {
@@ -28,15 +27,14 @@
         }
         .input-grup input:focus { border-color: #3b82f6; outline: none; }
 
-        /* Butonlar */
         .btn {
             padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; margin: 5px;
         }
         .btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
         .btn-basla { background-color: #2563eb; color: white; width: 100%; margin-top: 10px; }
         .btn-basla:hover:not(:disabled) { background-color: #1d4ed8; }
-        .btn-anasayfa { background-color: #475569; color: white; width: 100%; margin-top: 8px; }
-        .btn-anasayfa:hover { background-color: #334155; }
+        .btn-anasayfa { background-color: #64748b; color: white; width: 100%; margin-top: 8px; }
+        .btn-anasayfa:hover { background-color: #475569; }
         .btn-dinle { background-color: #0ea5e9; color: white; font-size: 18px; padding: 14px 28px; }
         .btn-dinle:hover { background-color: #0284c7; }
         .btn-kontrol { background-color: #10b981; color: white; }
@@ -44,10 +42,8 @@
         .btn-sonraki { background-color: #6366f1; color: white; display: none; }
         .btn-sonraki:hover { background-color: #4f46e5; }
 
-        /* Oyun Alanı */
         .ust-bilgi { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #64748b; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
-        .ust-anasayfa-link { color: #2563eb; text-decoration: none; font-weight: 600; font-size: 13px; }
-        .ust-anasayfa-link:hover { text-decoration: underline; }
+        .cikis-link { color: #64748b; text-decoration: none; font-weight: 600; font-size: 13px; padding: 4px 8px; border-radius: 6px; background: #f1f5f9; }
         
         .kelime-havuzu {
             min-height: 70px; padding: 15px; background-color: #f8fafc; border-radius: 10px; margin: 20px 0;
@@ -84,18 +80,7 @@
 </head>
 <body>
 
-<!-- NETLIFY ORTAK FORM ŞABLONU -->
-<form name="oynayanlar" netlify netlify-honeypot="bot-field" hidden>
-    <input type="text" name="oyun_adi" />
-    <input type="text" name="ogrenci_adi" />
-    <input type="text" name="sinifi" />
-    <input type="text" name="puan" />
-    <input type="text" name="yildiz" />
-    <input type="text" name="tarih_saat" />
-</form>
-
 <div class="kart">
-    <!-- 1. GİRİŞ EKRANI -->
     <div id="girisEkrani">
         <h2>🎧 Dinle ve Cümle Kur</h2>
         <p style="color: #64748b;">Başlamadan önce bilgilerini gir.</p>
@@ -108,16 +93,15 @@
             <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A" onkeydown="enterKontrol(event)">
         </div>
         <button id="baslaBtn" class="btn btn-basla" onclick="oyunuBaslat()" disabled>Yükleniyor...</button>
-        <button class="btn btn-anasayfa" onclick="window.location.href='https://student-games-website.netlify.app/'">🏠 Ana Sayfaya Dön</button>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 
-    <!-- 2. OYUN EKRANI -->
     <div id="oyunEkrani" class="gizli">
         <div class="ust-bilgi">
-            <a href="index.html" class="ust-anasayfa-link">🏠 Ana Sayfa</a>
             <span id="oyuncuBilgi">Öğrenci: -</span>
             <span>Soru: <strong id="soruNo">1</strong> / <strong id="toplamSoru">0</strong></span>
             <span>Puan: <strong id="puan">0</strong></span>
+            <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
         </div>
 
         <button class="btn btn-dinle" onclick="cumleyiDinle()">🔊 Listen / Dinle</button>
@@ -133,19 +117,19 @@
         <button id="sonrakiBtn" class="btn btn-sonraki" onclick="sonrakiSoru()">Sonraki Cümle ➔</button>
     </div>
 
-    <!-- 3. SONUÇ EKRANI -->
     <div id="sonucEkrani" class="gizli">
         <h2>🎉 Tebrikler!</h2>
         <div id="yildizAlani" class="yildiz-kutusu"></div>
         <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
         <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
         <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
-        <button class="btn btn-anasayfa" onclick="window.location.href='https://student-games-website.netlify.app/'">🏠 Ana Sayfaya Dön</button>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 </div>
 
 <script>
-    const OYUNUN_ADI = "Dinle ve Cümle Kur";
+    const OYUNUN_ADI = "Dinle ve Cümle Kur (2. Sınıf)";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
 
     let cumleListesi = [];
     let mevcutIndex = 0;
@@ -162,13 +146,10 @@
             const yanit = await fetch('sentences.txt');
             if (!yanit.ok) throw new Error("Dosya bulunamadı");
             const metin = await yanit.text();
-            
             cumleListesi = metin.split('\n')
                 .map(satir => satir.replace(/^\d+[\-\.\)]\s*/, '').trim())
                 .filter(satir => satir.length > 0);
-
             if (cumleListesi.length === 0) throw new Error("Dosya boş");
-
         } catch (hata) {
             cumleListesi = [
                 "What is this?",
@@ -184,13 +165,8 @@
         }
     };
 
-    function enterKontrol(e) {
-        if (e.key === "Enter") oyunuBaslat();
-    }
-
-    function kelimelereAyir(cumle) {
-        return cumle.replace(/([?.!,])/g, " $1 ").trim().split(/\s+/);
-    }
+    function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
+    function kelimelereAyir(cumle) { return cumle.replace(/([?.!,])/g, " $1 ").trim().split(/\s+/); }
 
     function diziyiKaristir(dizi) {
         const kopya = [...dizi];
@@ -198,26 +174,19 @@
             const j = Math.floor(Math.random() * (i + 1));
             [kopya[i], kopya[j]] = [kopya[j], kopya[i]];
         }
-        if (kopya.join(" ") === dizi.join(" ") && kopya.length > 1) {
-            return diziyiKaristir(dizi);
-        }
+        if (kopya.join(" ") === dizi.join(" ") && kopya.length > 1) return diziyiKaristir(dizi);
         return kopya;
     }
 
     function oyunuBaslat() {
         ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
-
-        if (!ogrenciAdi || !ogrenciSinifi) {
-            alert("Lütfen adını ve sınıfını yaz!");
-            return;
-        }
+        if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
 
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
         document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
         document.getElementById("toplamSoru").innerText = cumleListesi.length;
-
         soruyuHazirla();
     }
 
@@ -246,20 +215,14 @@
             kutu.id = "kelime-" + index;
 
             kutu.ondragstart = function() { suruklenenKutu = kutu; };
-
             kutu.onclick = function() {
                 if (document.getElementById("kontrolBtn").style.display === "none") return;
-                if (kutu.parentElement.id === "havuzAlani") {
-                    cizgi.appendChild(kutu);
-                } else {
-                    havuz.appendChild(kutu);
-                }
+                if (kutu.parentElement.id === "havuzAlani") cizgi.appendChild(kutu);
+                else havuz.appendChild(kutu);
                 kutu.classList.remove("dogru-kelime", "yanlis-kelime");
             };
-
             havuz.appendChild(kutu);
         });
-
         setTimeout(cumleyiDinle, 300);
     }
 
@@ -282,12 +245,8 @@
 
     function cumleyiDinle() {
         window.speechSynthesis.cancel();
-        if (aktifSes) {
-            aktifSes.pause();
-            aktifSes.currentTime = 0;
-        }
-        const mp3Yolu = `sesler/${mevcutIndex + 1}.mp3`;
-        aktifSes = new Audio(mp3Yolu);
+        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
+        aktifSes = new Audio(`sesler/${mevcutIndex + 1}.mp3`);
         aktifSes.onerror = tarayiciSesiyleOku;
         aktifSes.play().catch(tarayiciSesiyleOku);
     }
@@ -303,7 +262,6 @@
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const simdi = ctx.currentTime;
-
             if (dogruMu) {
                 const notalar = [659.25, 783.99, 1046.50]; 
                 notalar.forEach((frekans, i) => {
@@ -311,11 +269,9 @@
                     const gain = ctx.createGain();
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(frekans, simdi + i * 0.11);
-
                     gain.gain.setValueAtTime(0.001, simdi + i * 0.11);
                     gain.gain.exponentialRampToValueAtTime(0.35, simdi + i * 0.11 + 0.02);
                     gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.11 + 0.55);
-
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start(simdi + i * 0.11);
@@ -327,10 +283,8 @@
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(200, simdi);
                 osc.frequency.linearRampToValueAtTime(150, simdi + 0.25);
-
                 gain.gain.setValueAtTime(0.25, simdi);
                 gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.3);
-
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start(simdi);
@@ -356,17 +310,11 @@
 
         dizilenKutular.forEach((kutu, index) => {
             kutu.classList.remove("dogru-kelime", "yanlis-kelime");
-            if (kutu.innerText === dogruKelimeler[index]) {
-                kutu.classList.add("dogru-kelime");
-            } else {
-                kutu.classList.add("yanlis-kelime");
-                tamDogruMu = false;
-            }
+            if (kutu.innerText === dogruKelimeler[index]) kutu.classList.add("dogru-kelime");
+            else { kutu.classList.add("yanlis-kelime"); tamDogruMu = false; }
         });
 
-        if (dizilenKutular.length !== dogruKelimeler.length) {
-            tamDogruMu = false;
-        }
+        if (dizilenKutular.length !== dogruKelimeler.length) tamDogruMu = false;
 
         if (tamDogruMu) {
             neseliDingCal(true);
@@ -386,11 +334,8 @@
 
     function sonrakiSoru() {
         mevcutIndex++;
-        if (mevcutIndex < cumleListesi.length) {
-            soruyuHazirla();
-        } else {
-            oyunuBitir();
-        }
+        if (mevcutIndex < cumleListesi.length) soruyuHazirla();
+        else oyunuBitir();
     }
 
     async function oyunuBitir() {
@@ -402,13 +347,8 @@
 
         let yildizSayisi = 1;
         let yildizMesaji = "Güzel çaba! Biraz daha pratikle harika olacaksın.";
-        if (basariYuzdesi >= 80) {
-            yildizSayisi = 3;
-            yildizMesaji = "Mükemmel! Tam bir yıldız öğrencisin!";
-        } else if (basariYuzdesi >= 50) {
-            yildizSayisi = 2;
-            yildizMesaji = "Çok iyi iş çıkardın!";
-        }
+        if (basariYuzdesi >= 80) { yildizSayisi = 3; yildizMesaji = "Mükemmel! Tam bir yıldız öğrencisin!"; }
+        else if (basariYuzdesi >= 50) { yildizSayisi = 2; yildizMesaji = "Çok iyi iş çıkardın!"; }
 
         document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
         document.getElementById("sonucMetni").innerHTML = `
@@ -417,36 +357,32 @@
             Toplam Puanın: <strong>${puan} / ${maksimumPuan}</strong>
         `;
 
-        await netlifyKaydet(maksimumPuan, yildizSayisi);
+        await googleTabloyaKaydet(maksimumPuan, yildizSayisi);
     }
 
-    async function netlifyKaydet(maksimumPuan, yildizSayisi) {
+    async function googleTabloyaKaydet(maksimumPuan, yildizSayisi) {
         const simdi = new Date();
         const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " + 
                           simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
         const durumKutusu = document.getElementById("kayitDurumu");
 
-        const formData = new URLSearchParams();
-        formData.append("form-name", "oynayanlar");
-        formData.append("oyun_adi", OYUNUN_ADI);
-        formData.append("ogrenci_adi", ogrenciAdi);
-        formData.append("sinifi", ogrenciSinifi);
-        formData.append("puan", `${puan} / ${maksimumPuan}`);
-        formData.append("yildiz", `${yildizSayisi} Yıldız`);
-        formData.append("tarih_saat", tarihSaat);
+        const kayitVerisi = {
+            oyun_adi: OYUNUN_ADI,
+            ogrenci_adi: ogrenciAdi,
+            sinifi: ogrenciSinifi,
+            puan: `${puan} / ${maksimumPuan}`,
+            yildiz: `${yildizSayisi} Yıldız`,
+            tarih_saat: tarihSaat
+        };
 
         try {
-            const yanit = await fetch("/", {
+            await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: formData.toString()
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(kayitVerisi)
             });
-
-            if (yanit.ok) {
-                durumKutusu.innerHTML = `✅ Tebrikler! Sonucun başarıyla kaydedildi.`;
-            } else {
-                throw new Error("Sunucu yanıt vermedi");
-            }
+            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin Google E-Tablosuna kaydedildi.`;
         } catch (err) {
             durumKutusu.style.background = "#fef3c7";
             durumKutusu.style.color = "#92400e";
