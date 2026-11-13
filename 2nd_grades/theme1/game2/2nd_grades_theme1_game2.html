@@ -36,41 +36,19 @@
         .btn-anasayfa:hover { background-color: #475569; }
 
         .ust-bilgi {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            font-size: 14px;
-            color: #475569;
-            margin-bottom: 18px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+            font-size: 14px; color: #475569; margin-bottom: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;
         }
         .sure-kutusu {
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            font-weight: bold;
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid #bfdbfe;
+            background-color: #eff6ff; color: #1d4ed8; font-weight: bold; padding: 6px 12px; border-radius: 8px; border: 1px solid #bfdbfe;
         }
         .cikis-link {
-            color: #64748b;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            padding: 5px 10px;
-            border-radius: 6px;
-            background: #f1f5f9;
+            color: #64748b; text-decoration: none; font-weight: 600; font-size: 13px; padding: 5px 10px; border-radius: 6px; background: #f1f5f9;
         }
         .cikis-link:hover { background: #e2e8f0; color: #1e293b; }
 
         .oyun-izgara {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
-            margin: 15px 0;
+            display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 15px 0;
         }
 
         @media (max-width: 650px) {
@@ -78,18 +56,11 @@
         }
 
         .hafiza-kart {
-            aspect-ratio: 1 / 1.05;
-            perspective: 1000px;
-            cursor: pointer;
-            user-select: none;
+            aspect-ratio: 1 / 1.05; perspective: 1000px; cursor: pointer; user-select: none;
         }
 
         .kart-ic {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.45s;
-            transform-style: preserve-3d;
+            position: relative; width: 100%; height: 100%; transition: transform 0.45s; transform-style: preserve-3d;
         }
 
         .hafiza-kart.acik .kart-ic,
@@ -98,58 +69,27 @@
         }
 
         .kart-on, .kart-arka {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 6px;
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.08);
         }
 
         .kart-on {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            border: 2px solid #1d4ed8;
+            background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-size: 28px; font-weight: bold; border: 2px solid #1d4ed8;
         }
         .kart-on:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
 
         .kart-arka {
-            background-color: #ffffff;
-            border: 2px solid #cbd5e1;
-            transform: rotateY(180deg);
-            color: #1e293b;
+            background-color: #ffffff; border: 2px solid #cbd5e1; transform: rotateY(180deg); color: #1e293b;
         }
 
         .hafiza-kart.eslesti .kart-arka {
-            background-color: #dcfce7;
-            border-color: #22c55e;
-            color: #15803d;
+            background-color: #dcfce7; border-color: #22c55e; color: #15803d;
         }
 
-        .kart-resim {
-            width: 78%;
-            height: 78%;
-            object-fit: contain;
-        }
-
-        .kart-emoji {
-            font-size: 42px;
-            line-height: 1;
-        }
-
-        .kart-kelime {
-            font-size: 16px;
-            font-weight: 700;
-            word-break: break-word;
-            line-height: 1.2;
-        }
+        .kart-resim { width: 78%; height: 78%; object-fit: contain; }
+        .kart-emoji { font-size: 42px; line-height: 1; }
+        .kart-kelime { font-size: 16px; font-weight: 700; word-break: break-word; line-height: 1.2; }
 
         @media (max-width: 500px) {
             .kart-kelime { font-size: 13px; }
@@ -169,15 +109,6 @@
 </head>
 <body>
 
-<form name="oynayanlar" netlify netlify-honeypot="bot-field" hidden>
-    <input type="text" name="oyun_adi" />
-    <input type="text" name="ogrenci_adi" />
-    <input type="text" name="sinifi" />
-    <input type="text" name="puan" />
-    <input type="text" name="yildiz" />
-    <input type="text" name="tarih_saat" />
-</form>
-
 <div class="kart-kapsayici">
     <div id="girisEkrani">
         <h2>🃏 Resim ve Kelime Eşleştirme</h2>
@@ -192,7 +123,7 @@
         </div>
         <button class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
         <br>
-        <button class="btn btn-anasayfa" onclick="window.location.href='https://student-games-website.netlify.app/'">🏠 Ana Sayfaya Dön</button>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 
     <div id="oyunEkrani" class="gizli">
@@ -200,7 +131,7 @@
             <span id="oyuncuBilgi">Öğrenci: -</span>
             <span>Eşleşme: <strong id="eslesmeSayisi">0</strong> / 12</span>
             <span class="sure-kutusu">⏱️ <span id="sureGosterge">0 sn</span></span>
-            <a href="https://student-games-website.netlify.app/" class="cikis-link">🏠 Ana Sayfa</a>
+            <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
         </div>
 
         <div id="oyunAlani" class="oyun-izgara"></div>
@@ -213,12 +144,13 @@
         <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
         <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
         <br>
-        <button class="btn btn-anasayfa" onclick="window.location.href='https://student-games-website.netlify.app/'">🏠 Ana Sayfaya Dön</button>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 </div>
 
 <script>
     const OYUNUN_ADI = "Resim ve Kelime Eşleştirme (2. Sınıf)";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
 
     const kelimeVerileri = [
         { kelime: "teacher", dosya: "teacher", ikon: "👩‍🏫" },
@@ -245,9 +177,7 @@
     let ogrenciSinifi = "";
     let aktifSes = null;
 
-    function enterKontrol(e) {
-        if (e.key === "Enter") oyunuBaslat();
-    }
+    function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
 
     function diziyiKaristir(dizi) {
         const kopya = [...dizi];
@@ -259,9 +189,7 @@
     }
 
     function sureFormatla(toplamSaniye) {
-        if (toplamSaniye < 60) {
-            return `${toplamSaniye} sn`;
-        }
+        if (toplamSaniye < 60) return `${toplamSaniye} sn`;
         const dakika = Math.floor(toplamSaniye / 60);
         const saniye = toplamSaniye % 60;
         return `${dakika} dk ${saniye < 10 ? '0' : ''}${saniye} sn`;
@@ -270,11 +198,7 @@
     function oyunuBaslat() {
         ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
-
-        if (!ogrenciAdi || !ogrenciSinifi) {
-            alert("Lütfen adını ve sınıfını yaz!");
-            return;
-        }
+        if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
 
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
@@ -312,11 +236,11 @@
 
             let arkaIcerik = "";
             if (veri.tip === "resim") {
-   	    	arkaIcerik = `
-            		<img src="resimler/${veri.dosya}.png" alt="${veri.kelime}" class="kart-resim"
-             			onerror="if(!this.dataset.deneme){this.dataset.deneme='jpg';this.src='resimler/${veri.dosya}.jpg';}else if(this.dataset.deneme==='jpg'){this.dataset.deneme='jpeg';this.src='resimler/${veri.dosya}.jpeg';}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
-            		<span class="kart-emoji" style="display:none;">${veri.ikon}</span>
-           	`;
+                arkaIcerik = `
+                    <img src="resimler/${veri.dosya}.png" alt="${veri.kelime}" class="kart-resim"
+                         onerror="if(!this.dataset.deneme){this.dataset.deneme='jpg';this.src='resimler/${veri.dosya}.jpg';}else if(this.dataset.deneme==='jpg'){this.dataset.deneme='jpeg';this.src='resimler/${veri.dosya}.jpeg';}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
+                    <span class="kart-emoji" style="display:none;">${veri.ikon}</span>
+                `;
             } else {
                 arkaIcerik = `<span class="kart-kelime">${veri.kelime}</span>`;
             }
@@ -362,15 +286,10 @@
                 acikKartlar = [];
                 kilitli = false;
 
-                if (eslesenCift === kelimeVerileri.length) {
-                    oyunuBitir();
-                }
+                if (eslesenCift === kelimeVerileri.length) oyunuBitir();
             }, 450);
         } else {
-            setTimeout(() => {
-                neseliDingCal(false);
-            }, 400);
-
+            setTimeout(() => { neseliDingCal(false); }, 400);
             setTimeout(() => {
                 kart1.classList.remove("acik");
                 kart2.classList.remove("acik");
@@ -382,11 +301,7 @@
 
     function kelimeyiOku(kelime, dosyaAdi) {
         window.speechSynthesis.cancel();
-        if (aktifSes) {
-            aktifSes.pause();
-            aktifSes.currentTime = 0;
-        }
-
+        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
         aktifSes = new Audio(`sesler/${dosyaAdi}.mp3`);
         aktifSes.onerror = () => tarayiciSesiyleOku(kelime);
         aktifSes.play().catch(() => tarayiciSesiyleOku(kelime));
@@ -403,7 +318,6 @@
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const simdi = ctx.currentTime;
-
             if (dogruMu) {
                 const notalar = [659.25, 783.99, 1046.50];
                 notalar.forEach((frekans, i) => {
@@ -411,11 +325,9 @@
                     const gain = ctx.createGain();
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(frekans, simdi + i * 0.1);
-
                     gain.gain.setValueAtTime(0.001, simdi + i * 0.1);
                     gain.gain.exponentialRampToValueAtTime(0.35, simdi + i * 0.1 + 0.02);
                     gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.1 + 0.5);
-
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start(simdi + i * 0.1);
@@ -427,10 +339,8 @@
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(200, simdi);
                 osc.frequency.linearRampToValueAtTime(150, simdi + 0.22);
-
                 gain.gain.setValueAtTime(0.22, simdi);
                 gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.25);
-
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start(simdi);
@@ -445,19 +355,13 @@
         document.getElementById("sonucEkrani").classList.remove("gizli");
 
         const bitisSuresiMetni = sureFormatla(gecenSaniye);
-
         const fazlaHamle = Math.max(0, hamleSayisi - 12);
         const puan = Math.max(40, 100 - (fazlaHamle * 3));
 
         let yildizSayisi = 1;
         let yildizMesaji = "Güzel çaba! Kartların yerini aklında tutarak daha hızlı bitirebilirsin.";
-        if (puan >= 80) {
-            yildizSayisi = 3;
-            yildizMesaji = "Mükemmel hafıza! Tam bir yıldız öğrencisin!";
-        } else if (puan >= 60) {
-            yildizSayisi = 2;
-            yildizMesaji = "Çok iyi iş çıkardın!";
-        }
+        if (puan >= 80) { yildizSayisi = 3; yildizMesaji = "Mükemmel hafıza! Tam bir yıldız öğrencisin!"; }
+        else if (puan >= 60) { yildizSayisi = 2; yildizMesaji = "Çok iyi iş çıkardın!"; }
 
         document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
         document.getElementById("sonucMetni").innerHTML = `
@@ -466,36 +370,32 @@
             Süre: <strong>${bitisSuresiMetni}</strong> | Puan: <strong>${puan} / 100</strong>
         `;
 
-        await netlifyKaydet(puan, bitisSuresiMetni, yildizSayisi);
+        await googleTabloyaKaydet(puan, bitisSuresiMetni, yildizSayisi);
     }
 
-    async function netlifyKaydet(puan, sureMetni, yildizSayisi) {
+    async function googleTabloyaKaydet(puan, sureMetni, yildizSayisi) {
         const simdi = new Date();
         const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " + 
                           simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
         const durumKutusu = document.getElementById("kayitDurumu");
 
-        const formData = new URLSearchParams();
-        formData.append("form-name", "oynayanlar");
-        formData.append("oyun_adi", OYUNUN_ADI);
-        formData.append("ogrenci_adi", ogrenciAdi);
-        formData.append("sinifi", ogrenciSinifi);
-        formData.append("puan", `${puan}/100 (${sureMetni})`);
-        formData.append("yildiz", `${yildizSayisi} Yıldız`);
-        formData.append("tarih_saat", tarihSaat);
+        const kayitVerisi = {
+            oyun_adi: OYUNUN_ADI,
+            ogrenci_adi: ogrenciAdi,
+            sinifi: ogrenciSinifi,
+            puan: `${puan}/100 (${sureMetni})`,
+            yildiz: `${yildizSayisi} Yıldız`,
+            tarih_saat: tarihSaat
+        };
 
         try {
-            const yanit = await fetch("/", {
+            await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: formData.toString()
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(kayitVerisi)
             });
-
-            if (yanit.ok) {
-                durumKutusu.innerHTML = `✅ Tebrikler! Sonucun başarıyla kaydedildi.`;
-            } else {
-                throw new Error("Sunucu yanıt vermedi");
-            }
+            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin Google E-Tablosuna kaydedildi.`;
         } catch (err) {
             durumKutusu.style.background = "#fef3c7";
             durumKutusu.style.color = "#92400e";
