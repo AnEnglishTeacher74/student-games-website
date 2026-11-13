@@ -302,9 +302,17 @@
     function kelimeyiOku(kelime, dosyaAdi) {
         window.speechSynthesis.cancel();
         if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
+        
+        let yedekCalindi = false;
+        const yedekOku = () => {
+            if (yedekCalindi) return;
+            yedekCalindi = true;
+            tarayiciSesiyleOku(kelime);
+        };
+
         aktifSes = new Audio(`sesler/${dosyaAdi}.mp3`);
-        aktifSes.onerror = () => tarayiciSesiyleOku(kelime);
-        aktifSes.play().catch(() => tarayiciSesiyleOku(kelime));
+        aktifSes.onerror = yedekOku;
+        aktifSes.play().catch(yedekOku);
     }
 
     function tarayiciSesiyleOku(kelime) {
@@ -379,7 +387,7 @@
                           simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
         const durumKutusu = document.getElementById("kayitDurumu");
 
-        const kayitVerisi = {
+        const veriPaketi = {
             oyun_adi: OYUNUN_ADI,
             ogrenci_adi: ogrenciAdi,
             sinifi: ogrenciSinifi,
@@ -393,13 +401,12 @@
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(kayitVerisi)
+                body: JSON.stringify(veriPaketi)
             });
-            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin Google E-Tablosuna kaydedildi.`;
+            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.`;
         } catch (err) {
             durumKutusu.style.background = "#fef3c7";
             durumKutusu.style.color = "#92400e";
-            durumKutusu.style.borderColor = "#fcd34d";
             durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
         }
     }
