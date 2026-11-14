@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelime Avı Bulmacası (Word Search)</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 12px; }
+        
+        .kart-kapsayici {
+            background: white;
+            width: 100%;
+            max-width: 720px;
+            padding: 22px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 { color: #1e293b; margin-top: 0; }
+        
+        .input-grup { margin-bottom: 15px; text-align: left; max-width: 450px; margin-left: auto; margin-right: auto; }
+        .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; }
+        .input-grup input {
+            width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px;
+        }
+        .input-grup input:focus { border-color: #3b82f6; outline: none; }
+
+        .btn {
+            padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; margin: 5px;
+        }
+        .btn-basla { background-color: #2563eb; color: white; width: 100%; max-width: 450px; margin-top: 10px; }
+        .btn-basla:hover { background-color: #1d4ed8; }
+        .btn-anasayfa { background-color: #64748b; color: white; width: 100%; max-width: 450px; margin-top: 8px; }
+        .btn-anasayfa:hover { background-color: #475569; }
+
+        .ust-bilgi {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+            font-size: 14px; color: #475569; margin-bottom: 14px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;
+        }
+        .sure-kutusu {
+            background-color: #eff6ff; color: #1d4ed8; font-weight: bold; padding: 5px 10px; border-radius: 8px; border: 1px solid #bfdbfe;
+        }
+        .cikis-link {
+            color: #64748b; text-decoration: none; font-weight: 600; font-size: 13px; padding: 5px 10px; border-radius: 6px; background: #f1f5f9;
+        }
+        .cikis-link:hover { background: #e2e8f0; color: #1e293b; }
+
+        .yonerge {
+            font-size: 14px; color: #334155; background: #fef9c3; border: 1px solid #fde047;
+            padding: 8px 12px; border-radius: 8px; margin-bottom: 14px; font-weight: 500;
+        }
+
+        .kelime-listesi {
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px;
+        }
+
+        .kelime-etiket {
+            background-color: #f1f5f9; border: 2px solid #cbd5e1; color: #1e293b;
+            padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 700;
+            cursor: pointer; transition: 0.2s; user-select: none;
+        }
+        .kelime-etiket:hover { background-color: #e2e8f0; }
+        .kelime-etiket.bulundu {
+            text-decoration: line-through; opacity: 0.85; border-color: transparent;
+        }
+
+        .bulmaca-izgara {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            gap: 4px;
+            max-width: 480px;
+            margin: 0 auto 15px auto;
+            background: #e2e8f0;
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .harf-kutu {
+            aspect-ratio: 1 / 1;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e293b;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.12s, background-color 0.25s, color 0.25s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+        }
+        .harf-kutu:hover { background-color: #f8fafc; transform: scale(1.04); }
+
+        @media (max-width: 480px) {
+            .bulmaca-izgara { gap: 3px; padding: 4px; }
+            .harf-kutu { font-size: 15px; border-radius: 4px; }
+        }
+
+        @keyframes sarsil {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); background-color: #fee2e2; color: #b91c1c; }
+            75% { transform: translateX(4px); background-color: #fee2e2; color: #b91c1c; }
+        }
+        .yanlis-tik { animation: sarsil 0.3s ease; }
+
+        .yildiz-kutusu { font-size: 52px; margin: 15px 0; letter-spacing: 8px; animation: popIn 0.5s ease; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .kayit-bilgi { font-size: 13px; color: #15803d; background: #dcfce7; padding: 10px; border-radius: 8px; margin: 15px auto; max-width: 450px; border: 1px solid #86efac; }
+        .gizli { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="kart-kapsayici">
+    <div id="girisEkrani">
+        <h2>🔍 Kelime Avı (Word Search)</h2>
+        <p style="color: #64748b;">Bulmacadaki gizli kelimelerin <strong>ilk harfine</strong> dokun ve hepsini bul!</p>
+        <div class="input-grup">
+            <label for="ogrenciAd">Adın ve Soyadın:</label>
+            <input type="text" id="ogrenciAd" placeholder="Örn: Ali Demir" onkeydown="enterKontrol(event)">
+        </div>
+        <div class="input-grup">
+            <label for="ogrenciSinif">Sınıfın:</label>
+            <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A" onkeydown="enterKontrol(event)">
+        </div>
+        <button class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
+        <br>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+    </div>
+
+    <div id="oyunEkrani" class="gizli">
+        <div class="ust-bilgi">
+            <span id="oyuncuBilgi">Öğrenci: -</span>
+            <span>Bulunan: <strong id="bulunanSayisi">0</strong> / 12</span>
+            <span class="sure-kutusu">⏱️ <span id="sureGosterge">0 sn</span></span>
+            <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
+        </div>
+
+        <div class="yonerge">
+            💡 Yukarıdaki kelimelere dokunup dinleyebilirsin. Bulmacada kelimenin <strong>ilk harfine</strong> dokunman yeterli!
+        </div>
+
+        <div id="kelimeListesiAlani" class="kelime-listesi"></div>
+        <div id="bulmacaAlani" class="bulmaca-izgara"></div>
+    </div>
+
+    <div id="sonucEkrani" class="gizli">
+        <h2>🎉 Harika İş Çıkardın!</h2>
+        <div id="yildizAlani" class="yildiz-kutusu"></div>
+        <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
+        <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
+        <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
+        <br>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+    </div>
+</div>
+
+<script>
+    const OYUNUN_ADI = "Kelime Avı Bulmacası (2. Sınıf)";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
+    const BOYUT = 11;
+
+    const kelimeler = [
+        { gosterim: "teacher", temiz: "TEACHER", dosya: "teacher", renk: "#bbf7d0", yaziRenk: "#14532d" },
+        { gosterim: "headmaster", temiz: "HEADMASTER", dosya: "headmaster", renk: "#fed7aa", yaziRenk: "#7c2d12" },
+        { gosterim: "pupil", temiz: "PUPIL", dosya: "pupil", renk: "#bfdbfe", yaziRenk: "#1e3a8a" },
+        { gosterim: "girl", temiz: "GIRL", dosya: "girl", renk: "#fbcfe8", yaziRenk: "#831843" },
+        { gosterim: "boy", temiz: "BOY", dosya: "boy", renk: "#ddd6fe", yaziRenk: "#4c1d95" },
+        { gosterim: "friend", temiz: "FRIEND", dosya: "friend", renk: "#fef08a", yaziRenk: "#713f12" },
+        { gosterim: "playground", temiz: "PLAYGROUND", dosya: "playground", renk: "#99f6e4", yaziRenk: "#134e4a" },
+        { gosterim: "classroom", temiz: "CLASSROOM", dosya: "classroom", renk: "#fecaca", yaziRenk: "#7f1d1d" },
+        { gosterim: "lunch hall", temiz: "LUNCHHALL", dosya: "lunch_hall", renk: "#bae6fd", yaziRenk: "#0c4a6e" },
+        { gosterim: "sports hall", temiz: "SPORTSHALL", dosya: "sports_hall", renk: "#d9f99d", yaziRenk: "#365314" },
+        { gosterim: "library", temiz: "LIBRARY", dosya: "library", renk: "#f5d0fe", yaziRenk: "#701a75" },
+        { gosterim: "garden", temiz: "GARDEN", dosya: "garden", renk: "#c7d2fe", yaziRenk: "#312e81" }
+    ];
+
+    let izgara = [];
+    let yerlesenKelimeler = [];
+    let bulunanSayisi = 0;
+    let yanlisTikSayisi = 0;
+    let gecenSaniye = 0;
+    let zamanlayici = null;
+    let ogrenciAdi = "";
+    let ogrenciSinifi = "";
+    let aktifSes = null;
+
+    function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
+
+    function sureFormatla(toplamSaniye) {
+        if (toplamSaniye < 60) return `${toplamSaniye} sn`;
+        const dakika = Math.floor(toplamSaniye / 60);
+        const saniye = toplamSaniye % 60;
+        return `${dakika} dk ${saniye < 10 ? '0' : ''}${saniye} sn`;
+    }
+
+    function oyunuBaslat() {
+        ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
+        ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
+        if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
+
+        document.getElementById("girisEkrani").classList.add("gizli");
+        document.getElementById("oyunEkrani").classList.remove("gizli");
+        document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
+
+        bulmacayiOlustur();
+        sayaciBaslat();
+    }
+
+    function sayaciBaslat() {
+        gecenSaniye = 0;
+        document.getElementById("sureGosterge").innerText = "0 sn";
+        zamanlayici = setInterval(() => {
+            gecenSaniye++;
+            document.getElementById("sureGosterge").innerText = sureFormatla(gecenSaniye);
+        }, 1000);
+    }
+
+    function bulmacayiOlustur() {
+        let basarili = false;
+        while (!basarili) {
+            izgara = Array.from({ length: BOYUT }, () => Array(BOYUT).fill(""));
+            yerlesenKelimeler = [];
+            const siraliKelimeler = [...kelimeler].sort((a, b) => b.temiz.length - a.temiz.length);
+            basarili = true;
+
+            for (const item of siraliKelimeler) {
+                let yerlesti = false;
+                for (let deneme = 0; deneme < 250; deneme++) {
+                    const yon = Math.random() < 0.5 ? "yatay" : "dikey";
+                    const maxSatir = yon === "dikey" ? BOYUT - item.temiz.length : BOYUT - 1;
+                    const maxSutun = yon === "yatay" ? BOYUT - item.temiz.length : BOYUT - 1;
+                    const r = Math.floor(Math.random() * (maxSatir + 1));
+                    const c = Math.floor(Math.random() * (maxSutun + 1));
+
+                    let uygun = true;
+                    const hucreler = [];
+                    for (let i = 0; i < item.temiz.length; i++) {
+                        const nr = yon === "dikey" ? r + i : r;
+                        const nc = yon === "yatay" ? c + i : c;
+                        if (izgara[nr][nc] !== "" && izgara[nr][nc] !== item.temiz[i]) {
+                            uygun = false;
+                            break;
+                        }
+                        hucreler.push({ r: nr, c: nc });
+                    }
+
+                    if (uygun) {
+                        for (let i = 0; i < item.temiz.length; i++) {
+                            izgara[hucreler[i].r][hucreler[i].c] = item.temiz[i];
+                        }
+                        yerlesenKelimeler.push({
+                            ...item,
+                            baslangic: { r, c },
+                            hucreler: hucreler,
+                            bulundu: false
+                        });
+                        yerlesti = true;
+                        break;
+                    }
+                }
+                if (!yerlesti) {
+                    basarili = false;
+                    break;
+                }
+            }
+        }
+
+        const alfabe = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let r = 0; r < BOYUT; r++) {
+            for (let c = 0; c < BOYUT; c++) {
+                if (izgara[r][c] === "") {
+                    izgara[r][c] = alfabe[Math.floor(Math.random() * alfabe.length)];
+                }
+            }
+        }
+
+        ekraniCiz();
+    }
+
+    function ekraniCiz() {
+        const listeAlani = document.getElementById("kelimeListesiAlani");
+        listeAlani.innerHTML = "";
+        kelimeler.forEach(k => {
+            const etiket = document.createElement("div");
+            etiket.className = "kelime-etiket";
+            etiket.id = "etiket-" + k.temiz;
+            etiket.innerText = "🔊 " + k.gosterim;
+            etiket.onclick = () => kelimeyiOku(k.gosterim, k.dosya);
+            listeAlani.appendChild(etiket);
+        });
+
+        const bulmacaAlani = document.getElementById("bulmacaAlani");
+        bulmacaAlani.innerHTML = "";
+        for (let r = 0; r < BOYUT; r++) {
+            for (let c = 0; c < BOYUT; c++) {
+                const kutu = document.createElement("div");
+                kutu.className = "harf-kutu";
+                kutu.id = `hucre-${r}-${c}`;
+                kutu.innerText = izgara[r][c];
+                kutu.onclick = () => hucreyeTiklandi(r, c, kutu);
+                bulmacaAlani.appendChild(kutu);
+            }
+        }
+    }
+
+    function hucreyeTiklandi(r, c, kutu) {
+        const eslesenler = yerlesenKelimeler.filter(
+            k => !k.bulundu && k.baslangic.r === r && k.baslangic.c === c
+        );
+
+        if (eslesenler.length > 0) {
+            eslesenler.forEach(bulunan => {
+                bulunan.bulundu = true;
+                bulunanSayisi++;
+                document.getElementById("bulunanSayisi").innerText = bulunanSayisi;
+
+                bulunan.hucreler.forEach(h => {
+                    const hKutu = document.getElementById(`hucre-${h.r}-${h.c}`);
+                    hKutu.style.backgroundColor = bulunan.renk;
+                    hKutu.style.color = bulunan.yaziRenk;
+                });
+
+                const etiket = document.getElementById("etiket-" + bulunan.temiz);
+                etiket.classList.add("bulundu");
+                etiket.style.backgroundColor = bulunan.renk;
+                etiket.style.color = bulunan.yaziRenk;
+
+                neseliDingCal(true);
+                kelimeyiOku(bulunan.gosterim, bulunan.dosya);
+            });
+
+            if (bulunanSayisi === kelimeler.length) {
+                setTimeout(oyunuBitir, 700);
+            }
+        } else {
+            yanlisTikSayisi++;
+            neseliDingCal(false);
+            kutu.classList.remove("yanlis-tik");
+            void kutu.offsetWidth;
+            kutu.classList.add("yanlis-tik");
+        }
+    }
+
+    function kelimeyiOku(kelime, dosyaAdi) {
+        window.speechSynthesis.cancel();
+        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
+        let yedekCalindi = false;
+        const yedekOku = () => {
+            if (!yedekCalindi) {
+                yedekCalindi = true;
+                const metin = new SpeechSynthesisUtterance(kelime);
+                metin.lang = 'en-US';
+                metin.rate = 0.85;
+                window.speechSynthesis.speak(metin);
+            }
+        };
+        aktifSes = new Audio(`sesler/${dosyaAdi}.mp3`);
+        aktifSes.onerror = yedekOku;
+        aktifSes.play().catch(yedekOku);
+    }
+
+    function neseliDingCal(dogruMu) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const simdi = ctx.currentTime;
+            if (dogruMu) {
+                const notalar = [659.25, 783.99, 1046.50];
+                notalar.forEach((frekans, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(frekans, simdi + i * 0.09);
+                    gain.gain.setValueAtTime(0.001, simdi + i * 0.09);
+                    gain.gain.exponentialRampToValueAtTime(0.3, simdi + i * 0.09 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.09 + 0.45);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(simdi + i * 0.09);
+                    osc.stop(simdi + i * 0.09 + 0.5);
+                });
+            } else {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(190, simdi);
+                osc.frequency.linearRampToValueAtTime(140, simdi + 0.2);
+                gain.gain.setValueAtTime(0.2, simdi);
+                gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.22);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(simdi);
+                osc.stop(simdi + 0.22);
+            }
+        } catch (e) {}
+    }
+
+    async function oyunuBitir() {
+        clearInterval(zamanlayici);
+        document.getElementById("oyunEkrani").classList.add("gizli");
+        document.getElementById("sonucEkrani").classList.remove("gizli");
+
+        const bitisSuresiMetni = sureFormatla(gecenSaniye);
+        const puan = Math.max(50, 100 - (yanlisTikSayisi * 2));
+
+        let yildizSayisi = 1;
+        let yildizMesaji = "Güzel çaba! Biraz daha dikkatle tüm kelimeleri daha hızlı bulabilirsin.";
+        if (puan >= 85) { yildizSayisi = 3; yildizMesaji = "Mükemmel dikkat! Tam bir kelime avcısısın!"; }
+        else if (puan >= 65) { yildizSayisi = 2; yildizMesaji = "Çok iyi iş çıkardın!"; }
+
+        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
+        document.getElementById("sonucMetni").innerHTML = `
+            <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
+            ${yildizMesaji}<br>
+            Süre: <strong>${bitisSuresiMetni}</strong> | Puan: <strong>${puan} / 100</strong>
+        `;
+
+        await googleTabloyaKaydet(puan, bitisSuresiMetni, yildizSayisi);
+    }
+
+    async function googleTabloyaKaydet(puan, sureMetni, yildizSayisi) {
+        const simdi = new Date();
+        const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " + 
+                          simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const durumKutusu = document.getElementById("kayitDurumu");
+
+        const veriPaketi = {
+            oyun_adi: OYUNUN_ADI,
+            ogrenci_adi: ogrenciAdi,
+            sinifi: ogrenciSinifi,
+            puan: `${puan}/100 (${sureMetni})`,
+            yildiz: `${yildizSayisi} Yıldız`,
+            tarih_saat: tarihSaat
+        };
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(veriPaketi)
+            });
+            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.`;
+        } catch (err) {
+            durumKutusu.style.background = "#fef3c7";
+            durumKutusu.style.color = "#92400e";
+            durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
+        }
+    }
+</script>
+
+</body>
+</html>
