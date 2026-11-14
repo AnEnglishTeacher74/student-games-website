@@ -238,7 +238,7 @@
             if (veri.tip === "resim") {
                 arkaIcerik = `
                     <img src="resimler/${veri.dosya}.png" alt="${veri.kelime}" class="kart-resim"
-                         onerror="if(!this.dataset.deneme){this.dataset.deneme='jpg';this.src='resimler/${veri.dosya}.jpg';}else if(this.dataset.deneme==='jpg'){this.dataset.deneme='jpeg';this.src='resimler/${veri.dosya}.jpeg';}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
+                         onerror="if(!this.dataset.deneme){this.dataset.deneme='jpg';this.src='resimler/${veri.dosya}.jpg';}else if(this.dataset.deneme==='jpg'){this.dataset.deneme='jpeg';this.src='resimler/${veri.dosya}.jpeg';}else if(this.dataset.deneme==='jpeg'){this.dataset.deneme='jfif';this.src='resimler/${veri.dosya}.jfif';}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
                     <span class="kart-emoji" style="display:none;">${veri.ikon}</span>
                 `;
             } else {
@@ -301,15 +301,18 @@
 
     function kelimeyiOku(kelime, dosyaAdi) {
         window.speechSynthesis.cancel();
-        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
-        
+        if (aktifSes) {
+            aktifSes.onended = null;
+            aktifSes.onerror = null;
+            aktifSes.pause();
+            aktifSes.currentTime = 0;
+        }
         let yedekCalindi = false;
         const yedekOku = () => {
             if (yedekCalindi) return;
             yedekCalindi = true;
             tarayiciSesiyleOku(kelime);
         };
-
         aktifSes = new Audio(`sesler/${dosyaAdi}.mp3`);
         aktifSes.onerror = yedekOku;
         aktifSes.play().catch(yedekOku);
