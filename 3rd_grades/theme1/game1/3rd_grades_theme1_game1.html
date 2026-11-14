@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3rd Grade - Balloon Pop Game</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 60%, #f0f9ff 100%);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 12px; overflow-x: hidden;
+        }
+
+        .kart-kapsayici {
+            background: rgba(255, 255, 255, 0.96);
+            width: 100%; max-width: 720px; padding: 24px;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.15);
+            text-align: center; position: relative;
+        }
+
+        h2 { color: #0f172a; margin-top: 0; }
+
+        .input-grup { margin-bottom: 15px; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto; }
+        .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #334155; }
+        .input-grup input {
+            width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px;
+        }
+        .input-grup input:focus { border-color: #0284c7; outline: none; }
+
+        .btn {
+            padding: 12px 24px; font-size: 16px; font-weight: bold; border: none;
+            border-radius: 10px; cursor: pointer; transition: 0.2s; margin: 5px;
+        }
+        .btn-basla { background-color: #0284c7; color: white; width: 100%; max-width: 440px; margin-top: 10px; }
+        .btn-basla:hover { background-color: #0369a1; }
+        .btn-anasayfa { background-color: #64748b; color: white; width: 100%; max-width: 440px; margin-top: 8px; }
+        .btn-anasayfa:hover { background-color: #475569; }
+        .btn-dinle {
+            background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
+            font-size: 18px; padding: 12px 28px; border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+        }
+        .btn-dinle:hover { transform: scale(1.05); }
+
+        .ust-bilgi {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+            font-size: 14px; color: #475569; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;
+        }
+        .sure-kutusu {
+            background-color: #e0f2fe; color: #0369a1; font-weight: bold; padding: 5px 12px; border-radius: 8px;
+        }
+        .cikis-link {
+            color: #475569; text-decoration: none; font-weight: 600; font-size: 13px;
+            padding: 5px 10px; border-radius: 6px; background: #f1f5f9;
+        }
+
+        .gokyuzu-alani {
+            position: relative; width: 100%; height: 340px;
+            background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 55%, #e0f2fe 100%);
+            border-radius: 16px; margin: 18px 0; overflow: hidden;
+            border: 3px solid #bae6fd; display: flex; justify-content: space-around; align-items: flex-end;
+            padding: 15px 10px 35px 10px;
+        }
+
+        .bulut {
+            position: absolute; background: rgba(255, 255, 255, 0.75); border-radius: 50px;
+            pointer-events: none;
+        }
+        .bulut1 { width: 90px; height: 30px; top: 25px; left: 10%; }
+        .bulut2 { width: 110px; height: 35px; top: 55px; right: 12%; }
+
+        .balon-kapsayici {
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            user-select: none; transition: transform 0.2s; z-index: 2;
+            animation: suzulme 3.2s ease-in-out infinite alternate;
+        }
+        .balon-kapsayici:nth-child(even) { animation-delay: 0.7s; }
+        .balon-kapsayici:hover { transform: scale(1.08); }
+
+        @keyframes suzulme {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-38px); }
+        }
+
+        .balon {
+            width: 125px; height: 145px; border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+            display: flex; justify-content: center; align-items: center; text-align: center;
+            padding: 10px; color: white; font-size: 18px; font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.12);
+            position: relative;
+        }
+        .balon::after {
+            content: ""; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            border-left: 7px solid transparent; border-right: 7px solid transparent;
+            border-bottom: 10px solid inherit;
+        }
+        .balon-ip {
+            width: 2px; height: 55px; background: rgba(71, 85, 105, 0.5); margin-top: 6px;
+        }
+
+        .renk-0 { background: radial-gradient(circle at 30% 30%, #fb7185, #e11d48); }
+        .renk-1 { background: radial-gradient(circle at 30% 30%, #34d399, #059669); }
+        .renk-2 { background: radial-gradient(circle at 30% 30%, #a78bfa, #7c3aed); }
+        .renk-3 { background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706); }
+
+        @media (max-width: 600px) {
+            .gokyuzu-alani { height: 310px; padding: 10px 4px 25px 4px; }
+            .balon { width: 78px; height: 96px; font-size: 13px; padding: 5px; }
+            .balon-ip { height: 40px; }
+        }
+
+        .patladi {
+            animation: patlamaEfekti 0.35s forwards !important;
+            pointer-events: none;
+        }
+        @keyframes patlamaEfekti {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.45); opacity: 0.7; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .sarsil {
+            animation: sarsilma 0.4s ease !important;
+        }
+        @keyframes sarsilma {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-8px); }
+        }
+
+        .durum-mesaji {
+            font-size: 18px; font-weight: bold; min-height: 28px; margin-top: 8px;
+        }
+        .yildiz-kutusu { font-size: 52px; margin: 15px 0; letter-spacing: 8px; }
+        .kayit-bilgi {
+            font-size: 13px; color: #15803d; background: #dcfce7; padding: 10px;
+            border-radius: 8px; margin: 15px auto; max-width: 450px; border: 1px solid #86efac;
+        }
+        .gizli { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="kart-kapsayici">
+    <div id="girisEkrani">
+        <h2>🎈 Balloon Pop! (Numbers & Greetings)</h2>
+        <p style="color: #64748b;">Dinle ve doğru kelimenin yazdığı balonu patlat!</p>
+        <div class="input-grup">
+            <label for="ogrenciAd">Adın ve Soyadın:</label>
+            <input type="text" id="ogrenciAd" placeholder="Örn: Zeynep Kaya" onkeydown="enterKontrol(event)">
+        </div>
+        <div class="input-grup">
+            <label for="ogrenciSinif">Sınıfın:</label>
+            <input type="text" id="ogrenciSinif" placeholder="Örn: 3-A" onkeydown="enterKontrol(event)">
+        </div>
+        <button class="btn btn-basla" onclick="oyunuBaslat()">Oyuna Başla ▶</button>
+        <br>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+    </div>
+
+    <div id="oyunEkrani" class="gizli">
+        <div class="ust-bilgi">
+            <span id="oyuncuBilgi">Öğrenci: -</span>
+            <span>Soru: <strong id="soruNo">1</strong> / <strong id="toplamSoru">12</strong></span>
+            <span>Puan: <strong id="puanGosterge">0</strong></span>
+            <span class="sure-kutusu">⏱️ <span id="sureGosterge">0 sn</span></span>
+            <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
+        </div>
+
+        <button class="btn btn-dinle" onclick="hedefKelimeyiOku()">🔊 Listen / Dinle</button>
+
+        <div id="gokyuzuAlani" class="gokyuzu-alani">
+            <div class="bulut bulut1"></div>
+            <div class="bulut bulut2"></div>
+        </div>
+
+        <div id="durumMesaji" class="durum-mesaji"></div>
+    </div>
+
+    <div id="sonucEkrani" class="gizli">
+        <h2>🎉 Tebrikler! Tüm Balonları Patlattın!</h2>
+        <div id="yildizAlani" class="yildiz-kutusu"></div>
+        <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
+        <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmeninin listesine gönderiliyor...</div>
+        <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
+        <br>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+    </div>
+</div>
+
+<script>
+    const OYUNUN_ADI = "Balloon Pop - Numbers & Greetings (3. Sınıf)";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
+
+    const kelimeHavuzu = [
+        "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+        "sixteen", "seventeen", "eighteen", "nineteen", "twenty",
+        "Hello!", "Good morning!", "Goodbye!", "school", "student", "teacher"
+    ];
+
+    let soruListesi = [];
+    let mevcutIndex = 0;
+    let puan = 0;
+    let hatalıDeneme = false;
+    let gecenSaniye = 0;
+    let zamanlayici = null;
+    let kilitli = false;
+    let ogrenciAdi = "";
+    let ogrenciSinifi = "";
+
+    function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
+
+    function diziyiKaristir(dizi) {
+        const kopya = [...dizi];
+        for (let i = kopya.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [kopya[i], kopya[j]] = [kopya[j], kopya[i]];
+        }
+        return kopya;
+    }
+
+    function sureFormatla(toplamSaniye) {
+        if (toplamSaniye < 60) return `${toplamSaniye} sn`;
+        const dakika = Math.floor(toplamSaniye / 60);
+        const saniye = toplamSaniye % 60;
+        return `${dakika} dk ${saniye < 10 ? '0' : ''}${saniye} sn`;
+    }
+
+    function oyunuBaslat() {
+        ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
+        ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
+        if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
+
+        soruListesi = diziyiKaristir(kelimeHavuzu).slice(0, 12);
+        mevcutIndex = 0;
+        puan = 0;
+
+        document.getElementById("girisEkrani").classList.add("gizli");
+        document.getElementById("oyunEkrani").classList.remove("gizli");
+        document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
+        document.getElementById("toplamSoru").innerText = soruListesi.length;
+
+        sayaciBaslat();
+        soruyuYukle();
+    }
+
+    function sayaciBaslat() {
+        gecenSaniye = 0;
+        zamanlayici = setInterval(() => {
+            gecenSaniye++;
+            document.getElementById("sureGosterge").innerText = sureFormatla(gecenSaniye);
+        }, 1000);
+    }
+
+    function soruyuYukle() {
+        kilitli = false;
+        hatalıDeneme = false;
+        const hedef = soruListesi[mevcutIndex];
+        document.getElementById("soruNo").innerText = mevcutIndex + 1;
+        document.getElementById("durumMesaji").innerText = "";
+
+        const digerleri = diziyiKaristir(kelimeHavuzu.filter(k => k !== hedef)).slice(0, 3);
+        const secenekler = diziyiKaristir([hedef, ...digerleri]);
+
+        const alan = document.getElementById("gokyuzuAlani");
+        alan.innerHTML = '<div class="bulut bulut1"></div><div class="bulut bulut2"></div>';
+
+        secenekler.forEach((kelime, idx) => {
+            const kapsayici = document.createElement("div");
+            kapsayici.className = "balon-kapsayici";
+            kapsayici.innerHTML = `
+                <div class="balon renk-${idx % 4}">${kelime}</div>
+                <div class="balon-ip"></div>
+            `;
+            kapsayici.onclick = () => balonTiklandi(kapsayici, kelime, hedef);
+            alan.appendChild(kapsayici);
+        });
+
+        setTimeout(hedefKelimeyiOku, 350);
+    }
+
+    function hedefKelimeyiOku() {
+        window.speechSynthesis.cancel();
+        const metin = new SpeechSynthesisUtterance(soruListesi[mevcutIndex]);
+        metin.lang = 'en-US';
+        metin.rate = 0.85;
+        window.speechSynthesis.speak(metin);
+    }
+
+    function sesCal(dogruMu) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const simdi = ctx.currentTime;
+            if (dogruMu) {
+                [587.33, 783.99, 1046.50].forEach((f, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, simdi + i * 0.08);
+                    gain.gain.setValueAtTime(0.001, simdi + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.3, simdi + i * 0.08 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.08 + 0.35);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(simdi + i * 0.08); osc.stop(simdi + i * 0.08 + 0.4);
+                });
+            } else {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(190, simdi);
+                osc.frequency.linearRampToValueAtTime(140, simdi + 0.22);
+                gain.gain.setValueAtTime(0.22, simdi);
+                gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.25);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(simdi); osc.stop(simdi + 0.25);
+            }
+        } catch (e) {}
+    }
+
+    function balonTiklandi(kapsayici, secilenKelime, hedefKelime) {
+        if (kilitli) return;
+        const mesaj = document.getElementById("durumMesaji");
+
+        if (secilenKelime === hedefKelime) {
+            kilitli = true;
+            kapsayici.classList.add("patladi");
+            sesCal(true);
+
+            const kazanilan = hatalıDeneme ? 5 : 10;
+            puan += kazanilan;
+            document.getElementById("puanGosterge").innerText = puan;
+
+            mesaj.style.color = "#16a34a";
+            mesaj.innerText = `🎈 Harika! Doğru balonu patlattın (+${kazanilan} puan)`;
+
+            setTimeout(() => {
+                mevcutIndex++;
+                if (mevcutIndex < soruListesi.length) soruyuYukle();
+                else oyunuBitir();
+            }, 950);
+        } else {
+            hatalıDeneme = true;
+            sesCal(false);
+            kapsayici.classList.remove("sarsil");
+            void kapsayici.offsetWidth;
+            kapsayici.classList.add("sarsil");
+
+            mesaj.style.color = "#dc2626";
+            mesaj.innerText = "Tekrar dinle ve doğru balonu seç!";
+        }
+    }
+
+    async function oyunuBitir() {
+        clearInterval(zamanlayici);
+        document.getElementById("oyunEkrani").classList.add("gizli");
+        document.getElementById("sonucEkrani").classList.remove("gizli");
+
+        const bitisSuresi = sureFormatla(gecenSaniye);
+        const maxPuan = soruListesi.length * 10;
+        const yuzde = (puan / maxPuan) * 100;
+
+        let yildiz = 1;
+        let yorum = "Güzel çaba! Tekrar oynayarak daha yüksek puan alabilirsin.";
+        if (yuzde >= 85) { yildiz = 3; yorum = "Mükemmel! Tam bir süper öğrencisin!"; }
+        else if (yuzde >= 60) { yildiz = 2; yorum = "Çok iyi iş çıkardın!"; }
+
+        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildiz) + "☆".repeat(3 - yildiz);
+        document.getElementById("sonucMetni").innerHTML = `
+            <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
+            ${yorum}<br>
+            Süre: <strong>${bitisSuresi}</strong> | Puan: <strong>${puan} / ${maxPuan}</strong>
+        `;
+
+        const simdi = new Date();
+        const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " +
+                          simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const durumKutusu = document.getElementById("kayitDurumu");
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    oyun_adi: OYUNUN_ADI,
+                    ogrenci_adi: ogrenciAdi,
+                    sinifi: ogrenciSinifi,
+                    puan: `${puan}/${maxPuan} (${bitisSuresi})`,
+                    yildiz: `${yildiz} Yıldız`,
+                    tarih_saat: tarihSaat
+                })
+            });
+            durumKutusu.innerHTML = "✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.";
+        } catch (err) {
+            durumKutusu.innerHTML = "ℹ️ Oyun tamamlandı (Çevrimdışı mod).";
+        }
+    }
+</script>
+
+</body>
+</html>
