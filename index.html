@@ -1,382 +1,531 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Little Lingo — English Learning Adventures</title>
     <style>
-        :root {
-            --bg-color: #FFFDF7;
-            --primary: #FF7A59;
-            --secondary: #4ECDC4;
-            --accent: #FFD166;
-            --purple: #845EC2;
-            --text-dark: #2D3142;
-            --text-light: #6C757D;
-            --card-bg: #FFFFFF;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        h1, h2, h3, h4, .logo {
-            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-            font-weight: 700;
-        }
-
-        header {
-            background: var(--card-bg);
-            padding: 1.2rem 5%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 14px;
+            color: #1e293b;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo span {
-            color: var(--secondary);
-        }
-
-        .hero {
-            text-align: center;
-            padding: 4rem 1.5rem 3rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #FFF3D1;
-            color: #D98200;
-            font-weight: 700;
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            letter-spacing: 0.5px;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin-bottom: 2rem;
         }
 
         .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 1rem 1.5rem 4rem;
+            width: 100%;
+            max-width: 920px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+            padding: 28px 22px;
+            border: 2px solid #e2e8f0;
         }
 
-        .section-title {
+        header {
             text-align: center;
-            font-size: 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 26px;
         }
 
-        .grade-selector {
+        .logo-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #b45309;
+            font-weight: 800;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid #fde68a;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #0f172a;
+        }
+
+        header p {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .step-title {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #64748b;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* 1. ADIM: SINIF BUTONLARI */
+        .grades-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        @media (max-width: 600px) {
+            .grades-grid { grid-template-columns: 1fr; gap: 10px; }
         }
 
         .grade-btn {
-            background: var(--card-bg);
-            border: 3px solid #EAEAEA;
-            border-radius: 24px;
-            padding: 1.8rem;
-            text-align: center;
+            background: #f8fafc;
+            border: 2.5px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 16px 12px;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
 
         .grade-btn:hover {
-            transform: translateY(-5px);
+            transform: translateY(-2px);
+            border-color: #94a3b8;
         }
 
-        .grade-btn.active.g2 { border-color: var(--primary); background: #FFF5F2; }
-        .grade-btn.active.g3 { border-color: var(--secondary); background: #F0FBF9; }
-        .grade-btn.active.g4 { border-color: var(--purple); background: #F6F2FC; }
+        .grade-btn .emoji { font-size: 30px; }
+        .grade-btn .title { font-size: 18px; font-weight: 800; color: #1e293b; }
+        .grade-btn .sub { font-size: 12px; font-weight: 600; color: #64748b; }
 
-        .grade-tag {
-            display: inline-block;
-            padding: 0.3rem 0.9rem;
-            border-radius: 12px;
-            color: white;
+        .grade-btn.active-2 { background: #eff6ff; border-color: #2563eb; box-shadow: 0 6px 16px rgba(37,99,235,0.16); }
+        .grade-btn.active-2 .title { color: #1d4ed8; }
+
+        .grade-btn.active-3 { background: #f0fdf4; border-color: #16a34a; box-shadow: 0 6px 16px rgba(22,163,74,0.16); }
+        .grade-btn.active-3 .title { color: #15803d; }
+
+        .grade-btn.active-4 { background: #fffbeb; border-color: #d97706; box-shadow: 0 6px 16px rgba(217,119,6,0.16); }
+        .grade-btn.active-4 .title { color: #b45309; }
+
+        /* BAŞLANGIÇ BOŞ DURUM */
+        .empty-prompt {
+            text-align: center;
+            padding: 36px 16px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 18px;
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* 2. ADIM: GAMES / LESSON NOTES SEKMELERİ */
+        .main-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            background: transparent;
+            color: #475569;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* 3. ADIM: TEMA / ÜNİTE HAP BUTONLARI */
+        .pills-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .unit-pill {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 2px solid #cbd5e1;
+            background: #ffffff;
+            color: #475569;
+            font-size: 14px;
             font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
         }
 
-        .g2 .grade-tag { background: var(--primary); }
-        .g3 .grade-tag { background: var(--secondary); }
-        .g4 .grade-tag { background: var(--purple); }
-
-        .grade-btn h3 {
-            font-size: 1.6rem;
-            margin-bottom: 0.3rem;
+        .unit-pill:hover {
+            border-color: #64748b;
+            color: #0f172a;
         }
 
-        .grade-btn p {
-            color: var(--text-light);
-            font-size: 1rem;
+        .unit-pill.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(37,99,235,0.25);
         }
 
-        .units-area {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .units-area.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .unit-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 2px solid #F1F1F1;
-        }
-
-        .unit-header {
+        /* İÇERİK KARTLARI */
+        .unit-header-box {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px dashed #EEEEEE;
-        }
-
-        .unit-badge {
-            background: var(--accent);
-            color: var(--text-dark);
-            font-weight: 700;
-            padding: 0.4rem 1rem;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 12px 16px;
             border-radius: 12px;
-            font-size: 0.95rem;
+            margin-bottom: 16px;
+            border-left: 5px solid #2563eb;
         }
 
-        .games-grid {
+        .unit-header-box h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .unit-tag {
+            font-size: 12px;
+            font-weight: 800;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
         }
 
-        .game-card {
-            background: #FAFAFA;
-            border: 2px solid #EAEAEA;
-            border-radius: 18px;
-            padding: 1.5rem;
+        .item-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: all 0.2s ease;
+            gap: 14px;
+            transition: 0.2s;
         }
 
-        .game-card:hover {
-            border-color: var(--secondary);
-            background: #FFFFFF;
-            transform: translateY(-3px);
+        .item-card:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 6px 18px rgba(37,99,235,0.08);
         }
 
-        .game-card h4 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
+        .item-card h4 {
+            margin: 0 0 6px;
+            font-size: 17px;
+            color: #1e293b;
         }
 
-        .game-card p {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 1.2rem;
+        .item-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.45;
         }
 
-        .play-btn {
+        .action-btn {
             display: inline-block;
             text-align: center;
-            background: var(--secondary);
-            color: white;
             text-decoration: none;
-            font-weight: 700;
-            padding: 0.8rem 1.2rem;
-            border-radius: 14px;
-            transition: background 0.2s;
+            background: #10b981;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            transition: 0.2s;
         }
 
-        .play-btn:hover {
-            background: #3DBBB2;
+        .action-btn:hover { background: #059669; }
+
+        .action-btn.note-btn { background: #3b82f6; }
+        .action-btn.note-btn:hover { background: #2563eb; }
+
+        .coming-card {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 28px 18px;
+            text-align: center;
+            color: #64748b;
         }
 
-        .play-btn.coming-soon {
-            background: #E0E0E0;
-            color: #888888;
-            pointer-events: none;
-        }
+        .gizli { display: none; }
 
         footer {
+            margin-top: 22px;
             text-align: center;
-            padding: 2.5rem 1rem;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            border-top: 1px solid #EEEEEE;
+            font-size: 13px;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 
+<div class="container">
     <header>
-        <a href="#" class="logo">little <span>lingo.</span></a>
-        <div style="font-weight: 700; color: var(--text-light);">English Learning Adventures</div>
+        <div class="logo-badge">✨ Little Lingo</div>
+        <h1>English Learning Adventures</h1>
+        <p>Select your grade, pick a theme or unit, and start learning!</p>
     </header>
 
-    <section class="hero">
-        <div class="badge">✨ YOUR ENGLISH ADVENTURE STARTS HERE</div>
-        <h1>Little games. Big discoveries.</h1>
-        <p>Pick your grade, find your unit, and let's play!</p>
-    </section>
+    <!-- 1. ADIM: SINIF SEÇİMİ -->
+    <div class="step-title">Step 1 · Choose Your Grade</div>
+    <div class="grades-grid">
+        <button id="btnGrade2" class="grade-btn" onclick="selectGrade(2)">
+            <span class="emoji">🎈</span>
+            <span class="title">2nd Grade</span>
+            <span class="sub">Themes 1 – 6</span>
+        </button>
+        <button id="btnGrade3" class="grade-btn" onclick="selectGrade(3)">
+            <span class="emoji">🚀</span>
+            <span class="title">3rd Grade</span>
+            <span class="sub">Themes 1 – 6</span>
+        </button>
+        <button id="btnGrade4" class="grade-btn" onclick="selectGrade(4)">
+            <span class="emoji">🌍</span>
+            <span class="title">4th Grade</span>
+            <span class="sub">Units 1 – 10</span>
+        </button>
+    </div>
 
-    <main class="container">
-        <h2 class="section-title">Choose your grade</h2>
+    <!-- BAŞLANGIÇ MESAJI -->
+    <div id="welcomeBox" class="empty-prompt">
+        👆 Tap a grade above to view Games and Lesson Notes!
+    </div>
 
-        <div class="grade-selector">
-            <div class="grade-btn g2 active" onclick="selectGrade('grade2', this)">
-                <div class="grade-tag">2nd Grade</div>
-                <h3>Little Explorers</h3>
-                <p>Themes &amp; Fun Games</p>
-            </div>
-
-            <div class="grade-btn g3" onclick="selectGrade('grade3', this)">
-                <div class="grade-tag">3rd Grade</div>
-                <h3>Curious Thinkers</h3>
-                <p>Units &amp; Word Challenges</p>
-            </div>
-
-            <div class="grade-btn g4" onclick="selectGrade('grade4', this)">
-                <div class="grade-tag">4th Grade</div>
-                <h3>Growing Adventurers</h3>
-                <p>Units &amp; Sentence Games</p>
-            </div>
+    <!-- 2. VE 3. ADIM ALANI -->
+    <div id="contentArea" class="gizli">
+        <div class="main-tabs">
+            <button id="tabGames" class="tab-btn active" onclick="selectTab('games')">🎮 Games</button>
+            <button id="tabNotes" class="tab-btn" onclick="selectTab('notes')">📚 Lesson Notes</button>
         </div>
 
-        <div id="grade2" class="units-area active">
-            <div class="unit-card">
-                <div class="unit-header">
-                    <span class="unit-badge">THEME 1</span>
-                    <h3>School Life &amp; Words</h3>
-                </div>
-                <div class="games-grid">
-                    <div class="game-card">
-                        <div>
-                            <h4>Game 1 · Audio &amp; Word Match</h4>
-                            <p>Listen carefully and find the correct answer!</p>
-                        </div>
-                        <a href="2nd_grades/theme1/game1/2nd_grades_theme1_game1.html" class="play-btn">▶ Play Game 1</a>
-                    </div>
+        <div id="pillsContainer" class="pills-wrapper"></div>
+        <div id="dynamicContent"></div>
+    </div>
+</div>
 
-                    <div class="game-card">
-                        <div>
-                            <h4>Game 2 · Picture &amp; Word Memory</h4>
-                            <p>Flip the cards, listen, and match pictures with words!</p>
-                        </div>
-                        <a href="2nd_grades/theme1/game2/2nd_grades_theme1_game2.html" class="play-btn">▶ Play Game 2</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+<footer>
+    © Little Lingo · Interactive English Games & Study Notes
+</footer>
 
-        <div id="grade3" class="units-area">
-            <div class="unit-card">
-                <div class="unit-header">
-                    <span class="unit-badge">UNIT 1</span>
-                    <h3>Greeting &amp; Numbers</h3>
-                </div>
-                <div class="games-grid">
-                    <div class="game-card">
-                        <div>
-                            <h4>Game 1 · Coming Soon</h4>
-                            <p>New games for 3rd graders are on the way!</p>
-                        </div>
-                        <a href="#" class="play-btn coming-soon">Soon...</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-     <div id="grade4" class="units-area">
-            <div class="unit-card">
-                <div class="unit-header">
-                    <span class="unit-badge">UNIT 2</span>
-                    <h3>Nationality</h3>
-                </div>
-                <div class="games-grid">
-                    <div class="game-card">
-                        <div>
-                            <h4>Game 1 · Countries & Flags</h4>
-                            <p>Listen to the country name and pick the correct flag!</p>
-                        </div>
-                        <a href="4th_grades/unit2/game1/4th_grades_unit2_game1.html" class="play-btn">▶ Play Game 1</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </main>
-
-    <footer>
-        <p><strong>little lingo.</strong> — Made for curious minds and little victories. Keep learning. Keep smiling! 🌟</p>
-    </footer>
-
-    <script>
-        function selectGrade(gradeId, clickedElement) {
-            document.querySelectorAll('.grade-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            clickedElement.classList.add('active');
-
-            document.querySelectorAll('.units-area').forEach(area => {
-                area.classList.remove('active');
-            });
-            document.getElementById(gradeId).classList.add('active');
+<script>
+    const curriculumData = {
+        2: {
+            label: "Theme",
+            defaultUnit: 1,
+            units: [
+                {
+                    id: 1,
+                    title: "School Life & Greetings",
+                    games: [
+                        {
+                            name: "🎧 Game 1 · Listen & Order",
+                            desc: "Listen to the sentence and put the words in the correct order!",
+                            url: "2nd_grades/theme1/game1/2nd_grades_theme1_game1.html",
+                            btnText: "▶ Play Game 1"
+                        },
+                        {
+                            name: "🃏 Game 2 · Picture & Word Match",
+                            desc: "Flip the cards, listen, and match pictures with words!",
+                            url: "2nd_grades/theme1/game2/2nd_grades_theme1_game2.html",
+                            btnText: "▶ Play Game 2"
+                        }
+                    ],
+                    notes: []
+                },
+                { id: 2, title: "Classroom & Friends", games: [], notes: [] },
+                { id: 3, title: "Numbers & Colors", games: [], notes: [] },
+                { id: 4, title: "Body Parts", games: [], notes: [] },
+                { id: 5, title: "Pets & Animals", games: [], notes: [] },
+                { id: 6, title: "Fruits & Food", games: [], notes: [] }
+            ]
+        },
+        3: {
+            label: "Theme",
+            defaultUnit: 1,
+            units: [
+                { id: 1, title: "Greeting & Meeting", games: [], notes: [] },
+                { id: 2, title: "My Family", games: [], notes: [] },
+                { id: 3, title: "People I Love", games: [], notes: [] },
+                { id: 4, title: "Feelings", games: [], notes: [] },
+                { id: 5, title: "Toys and Games", games: [], notes: [] },
+                { id: 6, title: "My House", games: [], notes: [] }
+            ]
+        },
+        4: {
+            label: "Unit",
+            defaultUnit: 2,
+            units: [
+                { id: 1, title: "Classroom Rules", games: [], notes: [] },
+                {
+                    id: 2,
+                    title: "Nationality",
+                    games: [
+                        {
+                            name: "🏳️ Game 1 · Countries & Flags",
+                            desc: "Listen to the country name and pick the correct flag!",
+                            url: "4th_grades/unit2/game1/4th_grades_unit2_game1.html",
+                            btnText: "▶ Play Game 1"
+                        }
+                    ],
+                    notes: []
+                },
+                { id: 3, title: "Cartoon Characters", games: [], notes: [] },
+                { id: 4, title: "Free Time", games: [], notes: [] },
+                { id: 5, title: "My Day", games: [], notes: [] },
+                { id: 6, title: "Fun with Science", games: [], notes: [] },
+                { id: 7, title: "Jobs", games: [], notes: [] },
+                { id: 8, title: "My Clothes", games: [], notes: [] },
+                { id: 9, title: "My Friends", games: [], notes: [] },
+                { id: 10, title: "Food and Drinks", games: [], notes: [] }
+            ]
         }
-    </script>
+    };
+
+    let currentGrade = null;
+    let currentTab = "games";
+    let currentUnitId = null;
+
+    function selectGrade(grade) {
+        currentGrade = grade;
+        currentTab = "games";
+        currentUnitId = curriculumData[grade].defaultUnit;
+
+        document.getElementById("btnGrade2").className = "grade-btn" + (grade === 2 ? " active-2" : "");
+        document.getElementById("btnGrade3").className = "grade-btn" + (grade === 3 ? " active-3" : "");
+        document.getElementById("btnGrade4").className = "grade-btn" + (grade === 4 ? " active-4" : "");
+
+        document.getElementById("welcomeBox").classList.add("gizli");
+        document.getElementById("contentArea").classList.remove("gizli");
+
+        updateTabUI();
+        renderPills();
+        renderContent();
+    }
+
+    function selectTab(tab) {
+        currentTab = tab;
+        updateTabUI();
+        renderContent();
+    }
+
+    function updateTabUI() {
+        document.getElementById("tabGames").className = "tab-btn" + (currentTab === "games" ? " active" : "");
+        document.getElementById("tabNotes").className = "tab-btn" + (currentTab === "notes" ? " active" : "");
+    }
+
+    function selectUnit(unitId) {
+        currentUnitId = unitId;
+        renderPills();
+        renderContent();
+    }
+
+    function renderPills() {
+        const gradeObj = curriculumData[currentGrade];
+        const container = document.getElementById("pillsContainer");
+        container.innerHTML = "";
+
+        gradeObj.units.forEach(u => {
+            const btn = document.createElement("button");
+            btn.className = "unit-pill" + (u.id === currentUnitId ? " active" : "");
+            btn.innerText = `${gradeObj.label} ${u.id}`;
+            btn.onclick = () => selectUnit(u.id);
+            container.appendChild(btn);
+        });
+    }
+
+    function renderContent() {
+        const gradeObj = curriculumData[currentGrade];
+        const unitObj = gradeObj.units.find(u => u.id === currentUnitId);
+        const container = document.getElementById("dynamicContent");
+
+        let html = `
+            <div class="unit-header-box">
+                <h3>${gradeObj.label} ${unitObj.id} · ${unitObj.title}</h3>
+                <span class="unit-tag">${currentGrade === 2 ? '2nd Grade' : currentGrade === 3 ? '3rd Grade' : '4th Grade'}</span>
+            </div>
+        `;
+
+        if (currentTab === "games") {
+            if (unitObj.games.length > 0) {
+                html += `<div class="cards-grid">`;
+                unitObj.games.forEach(g => {
+                    html += `
+                        <div class="item-card">
+                            <div>
+                                <h4>${g.name}</h4>
+                                <p>${g.desc}</p>
+                            </div>
+                            <a href="${g.url}" class="action-btn">${g.btnText}</a>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            } else {
+                html += `
+                    <div class="coming-card">
+                        <strong>🔒 Games for ${gradeObj.label} ${unitObj.id} are coming soon!</strong><br>
+                        <span style="font-size:13px;">Check back soon for new interactive activities.</span>
+                    </div>
+                `;
+            }
+        } else {
+            if (unitObj.notes.length > 0) {
+                html += `<div class="cards-grid">`;
+                unitObj.notes.forEach(n => {
+                    html += `
+                        <div class="item-card">
+                            <div>
+                                <h4>${n.name}</h4>
+                                <p>${n.desc}</p>
+                            </div>
+                            <a href="${n.url}" class="action-btn note-btn">${n.btnText}</a>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            } else {
+                html += `
+                    <div class="coming-card">
+                        <strong>📚 Lesson Notes for ${gradeObj.label} ${unitObj.id} (${unitObj.title})</strong><br>
+                        <span style="font-size:13px;">Vocabulary lists and study cards will be added here soon.</span>
+                    </div>
+                `;
+            }
+        }
+
+        container.innerHTML = html;
+    }
+</script>
 
 </body>
 </html>
