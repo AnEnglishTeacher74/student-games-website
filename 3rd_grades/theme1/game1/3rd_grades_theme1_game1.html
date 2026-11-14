@@ -3,151 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3rd Grade - Balloon Pop Game</title>
+    <title>Balloon Pop - Numbers, Greetings & School</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
-            background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 60%, #f0f9ff 100%);
+            background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%);
             display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0; padding: 12px; overflow-x: hidden;
+            min-height: 100vh; margin: 0; padding: 12px;
+        }
+        
+        .kart {
+            background: white;
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
-        .kart-kapsayici {
-            background: rgba(255, 255, 255, 0.96);
-            width: 100%; max-width: 720px; padding: 24px;
-            border-radius: 20px; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.15);
-            text-align: center; position: relative;
-        }
-
-        h2 { color: #0f172a; margin-top: 0; }
-
-        .input-grup { margin-bottom: 15px; text-align: left; max-width: 440px; margin-left: auto; margin-right: auto; }
-        .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #334155; }
+        h2 { color: #1e293b; margin-top: 0; }
+        
+        .input-grup { margin-bottom: 15px; text-align: left; max-width: 420px; margin-left: auto; margin-right: auto; }
+        .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; }
         .input-grup input {
             width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px;
         }
-        .input-grup input:focus { border-color: #0284c7; outline: none; }
+        .input-grup input:focus { border-color: #3b82f6; outline: none; }
 
         .btn {
-            padding: 12px 24px; font-size: 16px; font-weight: bold; border: none;
-            border-radius: 10px; cursor: pointer; transition: 0.2s; margin: 5px;
+            padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; margin: 5px;
         }
-        .btn-basla { background-color: #0284c7; color: white; width: 100%; max-width: 440px; margin-top: 10px; }
-        .btn-basla:hover { background-color: #0369a1; }
-        .btn-anasayfa { background-color: #64748b; color: white; width: 100%; max-width: 440px; margin-top: 8px; }
+        .btn-basla { background-color: #2563eb; color: white; width: 100%; max-width: 420px; margin-top: 10px; }
+        .btn-basla:hover { background-color: #1d4ed8; }
+        .btn-anasayfa { background-color: #64748b; color: white; width: 100%; max-width: 420px; margin-top: 8px; }
         .btn-anasayfa:hover { background-color: #475569; }
         .btn-dinle {
-            background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
-            font-size: 18px; padding: 12px 28px; border-radius: 50px;
-            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white; font-size: 18px; padding: 12px 28px; border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
-        .btn-dinle:hover { transform: scale(1.05); }
+        .btn-dinle:hover { transform: scale(1.04); }
 
         .ust-bilgi {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
-            font-size: 14px; color: #475569; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;
+            font-size: 14px; color: #475569; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;
         }
         .sure-kutusu {
-            background-color: #e0f2fe; color: #0369a1; font-weight: bold; padding: 5px 12px; border-radius: 8px;
+            background-color: #eff6ff; color: #1d4ed8; font-weight: bold; padding: 5px 10px; border-radius: 8px; border: 1px solid #bfdbfe;
         }
         .cikis-link {
-            color: #475569; text-decoration: none; font-weight: 600; font-size: 13px;
-            padding: 5px 10px; border-radius: 6px; background: #f1f5f9;
+            color: #64748b; text-decoration: none; font-weight: 600; font-size: 13px; padding: 5px 10px; border-radius: 8px; background: #f1f5f9;
         }
 
         .gokyuzu-alani {
-            position: relative; width: 100%; height: 340px;
-            background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 55%, #e0f2fe 100%);
-            border-radius: 16px; margin: 18px 0; overflow: hidden;
-            border: 3px solid #bae6fd; display: flex; justify-content: space-around; align-items: flex-end;
-            padding: 15px 10px 35px 10px;
+            position: relative;
+            background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 65%, #dcfce7 100%);
+            border-radius: 16px;
+            padding: 25px 12px 35px 12px;
+            margin: 18px 0;
+            border: 2px solid #7dd3fc;
+            min-height: 290px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            overflow: hidden;
         }
-
-        .bulut {
-            position: absolute; background: rgba(255, 255, 255, 0.75); border-radius: 50px;
-            pointer-events: none;
-        }
-        .bulut1 { width: 90px; height: 30px; top: 25px; left: 10%; }
-        .bulut2 { width: 110px; height: 35px; top: 55px; right: 12%; }
 
         .balon-kapsayici {
-            display: flex; flex-direction: column; align-items: center; cursor: pointer;
-            user-select: none; transition: transform 0.2s; z-index: 2;
-            animation: suzulme 3.2s ease-in-out infinite alternate;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            animation: suzulme 2.8s ease-in-out infinite alternate;
+            transition: transform 0.25s ease, opacity 0.35s ease;
         }
-        .balon-kapsayici:nth-child(even) { animation-delay: 0.7s; }
-        .balon-kapsayici:hover { transform: scale(1.08); }
+        .balon-kapsayici:nth-child(2) { animation-delay: 0.5s; }
+        .balon-kapsayici:nth-child(3) { animation-delay: 1.0s; }
+        .balon-kapsayici:nth-child(4) { animation-delay: 1.5s; }
 
         @keyframes suzulme {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-38px); }
+            0% { transform: translateY(-7px); }
+            100% { transform: translateY(9px); }
         }
 
         .balon {
-            width: 125px; height: 145px; border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
-            display: flex; justify-content: center; align-items: center; text-align: center;
-            padding: 10px; color: white; font-size: 18px; font-weight: 800;
+            width: 125px;
+            height: 142px;
+            border-radius: 50% 50% 50% 50% / 42% 42% 58% 58%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            color: white;
+            font-weight: 800;
+            font-size: 17px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.25);
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.12);
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.18), inset 8px 8px 16px rgba(255,255,255,0.4), 0 8px 16px rgba(0,0,0,0.12);
             position: relative;
+            transition: transform 0.2s, background 0.3s;
+            line-height: 1.2;
         }
+
+        .balon:hover {
+            transform: scale(1.06);
+        }
+
         .balon::after {
-            content: ""; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
-            border-left: 7px solid transparent; border-right: 7px solid transparent;
-            border-bottom: 10px solid inherit;
+            content: "";
+            position: absolute;
+            bottom: -9px;
+            width: 14px;
+            height: 10px;
+            background: inherit;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
         }
+
         .balon-ip {
-            width: 2px; height: 55px; background: rgba(71, 85, 105, 0.5); margin-top: 6px;
+            width: 2px;
+            height: 36px;
+            background-color: #64748b;
+            margin-top: 6px;
         }
 
-        .renk-0 { background: radial-gradient(circle at 30% 30%, #fb7185, #e11d48); }
-        .renk-1 { background: radial-gradient(circle at 30% 30%, #34d399, #059669); }
-        .renk-2 { background: radial-gradient(circle at 30% 30%, #a78bfa, #7c3aed); }
-        .renk-3 { background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706); }
-
-        @media (max-width: 600px) {
-            .gokyuzu-alani { height: 310px; padding: 10px 4px 25px 4px; }
-            .balon { width: 78px; height: 96px; font-size: 13px; padding: 5px; }
-            .balon-ip { height: 40px; }
+        .anlam-etiketi {
+            margin-top: 6px;
+            background-color: #ffffff;
+            color: #15803d;
+            border: 2px solid #22c55e;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            animation: anlamBelir 0.25s ease;
         }
 
-        .patladi {
-            animation: patlamaEfekti 0.35s forwards !important;
+        @keyframes anlamBelir {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .balon-renk-0 { background: radial-gradient(circle at 30% 30%, #f87171, #dc2626); }
+        .balon-renk-1 { background: radial-gradient(circle at 30% 30%, #60a5fa, #2563eb); }
+        .balon-renk-2 { background: radial-gradient(circle at 30% 30%, #fbbf24, #d97706); }
+        .balon-renk-3 { background: radial-gradient(circle at 30% 30%, #a78bfa, #7c3aed); }
+
+        .balon-dogru-bekle .balon {
+            background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a) !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 22px rgba(34, 197, 94, 0.7);
+        }
+
+        .balon-patla {
+            animation: patlamaEfekti 0.38s ease forwards !important;
             pointer-events: none;
         }
+
         @keyframes patlamaEfekti {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.45); opacity: 0.7; }
+            0% { transform: scale(1.1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.7; }
             100% { transform: scale(0); opacity: 0; }
         }
 
-        .sarsil {
-            animation: sarsilma 0.4s ease !important;
+        .balon-yanlis {
+            animation: sarsinti 0.4s ease !important;
         }
-        @keyframes sarsilma {
+
+        @keyframes sarsinti {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
             50% { transform: translateX(10px); }
-            75% { transform: translateX(-8px); }
+            75% { transform: translateX(-6px); }
         }
 
-        .durum-mesaji {
-            font-size: 18px; font-weight: bold; min-height: 28px; margin-top: 8px;
+        @media (max-width: 550px) {
+            .balon { width: 105px; height: 120px; font-size: 14px; }
+            .anlam-etiketi { font-size: 13px; padding: 2px 8px; }
         }
-        .yildiz-kutusu { font-size: 52px; margin: 15px 0; letter-spacing: 8px; }
-        .kayit-bilgi {
-            font-size: 13px; color: #15803d; background: #dcfce7; padding: 10px;
-            border-radius: 8px; margin: 15px auto; max-width: 450px; border: 1px solid #86efac;
+
+        .mesaj { font-weight: bold; font-size: 17px; min-height: 26px; margin-top: 8px; }
+
+        .yildiz-kutusu { font-size: 52px; margin: 15px 0; letter-spacing: 8px; animation: popIn 0.5s ease; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
+
+        .kayit-bilgi { font-size: 13px; color: #15803d; background: #dcfce7; padding: 10px; border-radius: 8px; margin: 15px auto; max-width: 420px; border: 1px solid #86efac; }
         .gizli { display: none; }
     </style>
 </head>
 <body>
 
-<div class="kart-kapsayici">
+<div class="kart">
     <div id="girisEkrani">
-        <h2>🎈 Balloon Pop! (Numbers & Greetings)</h2>
-        <p style="color: #64748b;">Dinle ve doğru kelimenin yazdığı balonu patlat!</p>
+        <h2>🎈 Balloon Pop!</h2>
+        <p style="color: #64748b;">Dinle ve doğru kelimenin balonunu patlat!</p>
         <div class="input-grup">
             <label for="ogrenciAd">Adın ve Soyadın:</label>
             <input type="text" id="ogrenciAd" placeholder="Örn: Zeynep Kaya" onkeydown="enterKontrol(event)">
@@ -156,7 +213,7 @@
             <label for="ogrenciSinif">Sınıfın:</label>
             <input type="text" id="ogrenciSinif" placeholder="Örn: 3-A" onkeydown="enterKontrol(event)">
         </div>
-        <button class="btn btn-basla" onclick="oyunuBaslat()">Oyuna Başla ▶</button>
+        <button class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
         <br>
         <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
@@ -165,26 +222,23 @@
         <div class="ust-bilgi">
             <span id="oyuncuBilgi">Öğrenci: -</span>
             <span>Soru: <strong id="soruNo">1</strong> / <strong id="toplamSoru">12</strong></span>
-            <span>Puan: <strong id="puanGosterge">0</strong></span>
+            <span>Puan: <strong id="puan">0</strong></span>
             <span class="sure-kutusu">⏱️ <span id="sureGosterge">0 sn</span></span>
             <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
         </div>
 
-        <button class="btn btn-dinle" onclick="hedefKelimeyiOku()">🔊 Listen / Dinle</button>
+        <button class="btn btn-dinle" onclick="hedefiDinle()">🔊 Listen / Dinle</button>
 
-        <div id="gokyuzuAlani" class="gokyuzu-alani">
-            <div class="bulut bulut1"></div>
-            <div class="bulut bulut2"></div>
-        </div>
+        <div id="gokyuzuAlani" class="gokyuzu-alani"></div>
 
-        <div id="durumMesaji" class="durum-mesaji"></div>
+        <div id="mesajAlani" class="mesaj"></div>
     </div>
 
     <div id="sonucEkrani" class="gizli">
-        <h2>🎉 Tebrikler! Tüm Balonları Patlattın!</h2>
+        <h2>🎉 Tebrikler!</h2>
         <div id="yildizAlani" class="yildiz-kutusu"></div>
         <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
-        <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmeninin listesine gönderiliyor...</div>
+        <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
         <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
         <br>
         <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
@@ -192,24 +246,34 @@
 </div>
 
 <script>
-    const OYUNUN_ADI = "Balloon Pop - Numbers & Greetings (3. Sınıf)";
+    const OYUNUN_ADI = "Balloon Pop - Numbers & School (3. Sınıf)";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
 
     const kelimeHavuzu = [
-        "eleven", "twelve", "thirteen", "fourteen", "fifteen",
-        "sixteen", "seventeen", "eighteen", "nineteen", "twenty",
-        "Hello!", "Good morning!", "Goodbye!", "school", "student", "teacher"
+        { kelime: "eleven", anlam: "11", dosya: "eleven" },
+        { kelime: "twelve", anlam: "12", dosya: "twelve" },
+        { kelime: "fifteen", anlam: "15", dosya: "fifteen" },
+        { kelime: "seventeen", anlam: "17", dosya: "seventeen" },
+        { kelime: "twenty", anlam: "20", dosya: "twenty" },
+        { kelime: "Hello!", anlam: "Merhaba!", dosya: "hello" },
+        { kelime: "Good morning!", anlam: "Günaydın!", dosya: "good_morning" },
+        { kelime: "Goodbye!", anlam: "Hoşça kal!", dosya: "goodbye" },
+        { kelime: "school", anlam: "okul", dosya: "school" },
+        { kelime: "student", anlam: "öğrenci", dosya: "student" },
+        { kelime: "teacher", anlam: "öğretmen", dosya: "teacher" },
+        { kelime: "book", anlam: "kitap", dosya: "book" }
     ];
 
-    let soruListesi = [];
+    let sorular = [];
     let mevcutIndex = 0;
     let puan = 0;
-    let hatalıDeneme = false;
+    let hataliDeneme = 0;
     let gecenSaniye = 0;
     let zamanlayici = null;
     let kilitli = false;
     let ogrenciAdi = "";
     let ogrenciSinifi = "";
+    let aktifSes = null;
 
     function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
 
@@ -234,123 +298,177 @@
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
         if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
 
-        soruListesi = diziyiKaristir(kelimeHavuzu).slice(0, 12);
-        mevcutIndex = 0;
-        puan = 0;
-
+        sorular = diziyiKaristir(kelimeHavuzu);
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
         document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
-        document.getElementById("toplamSoru").innerText = soruListesi.length;
+        document.getElementById("toplamSoru").innerText = sorular.length;
 
         sayaciBaslat();
-        soruyuYukle();
+        soruyuHazirla();
     }
 
     function sayaciBaslat() {
         gecenSaniye = 0;
+        document.getElementById("sureGosterge").innerText = "0 sn";
         zamanlayici = setInterval(() => {
             gecenSaniye++;
             document.getElementById("sureGosterge").innerText = sureFormatla(gecenSaniye);
         }, 1000);
     }
 
-    function soruyuYukle() {
+    function soruyuHazirla() {
         kilitli = false;
-        hatalıDeneme = false;
-        const hedef = soruListesi[mevcutIndex];
+        hataliDeneme = 0;
+        const gokyuzu = document.getElementById("gokyuzuAlani");
+        const mesaj = document.getElementById("mesajAlani");
+        gokyuzu.innerHTML = "";
+        mesaj.innerText = "";
+
         document.getElementById("soruNo").innerText = mevcutIndex + 1;
-        document.getElementById("durumMesaji").innerText = "";
 
-        const digerleri = diziyiKaristir(kelimeHavuzu.filter(k => k !== hedef)).slice(0, 3);
-        const secenekler = diziyiKaristir([hedef, ...digerleri]);
+        const hedef = sorular[mevcutIndex];
+        const yanlislar = diziyiKaristir(kelimeHavuzu.filter(item => item.kelime !== hedef.kelime)).slice(0, 3);
+        const secenekler = diziyiKaristir([hedef, ...yanlislar]);
+        const renkIndeksleri = diziyiKaristir([0, 1, 2, 3]);
 
-        const alan = document.getElementById("gokyuzuAlani");
-        alan.innerHTML = '<div class="bulut bulut1"></div><div class="bulut bulut2"></div>';
-
-        secenekler.forEach((kelime, idx) => {
+        secenekler.forEach((secenek, i) => {
             const kapsayici = document.createElement("div");
             kapsayici.className = "balon-kapsayici";
-            kapsayici.innerHTML = `
-                <div class="balon renk-${idx % 4}">${kelime}</div>
-                <div class="balon-ip"></div>
-            `;
-            kapsayici.onclick = () => balonTiklandi(kapsayici, kelime, hedef);
-            alan.appendChild(kapsayici);
+
+            const balon = document.createElement("div");
+            balon.className = `balon balon-renk-${renkIndeksleri[i]}`;
+            balon.innerHTML = `<span>${secenek.kelime}</span>`;
+
+            const ip = document.createElement("div");
+            ip.className = "balon-ip";
+
+            kapsayici.appendChild(balon);
+            kapsayici.appendChild(ip);
+
+            kapsayici.onclick = () => balonaTiklandi(kapsayici, balon, secenek, hedef);
+            gokyuzu.appendChild(kapsayici);
         });
 
-        setTimeout(hedefKelimeyiOku, 350);
+        setTimeout(hedefiDinle, 350);
     }
 
-    function hedefKelimeyiOku() {
+    function balonaTiklandi(kapsayici, balon, secenek, hedef) {
+        if (kilitli) return;
+
+        if (secenek.kelime === hedef.kelime) {
+            kilitli = true;
+            sesEfektiCal(true);
+
+            kapsayici.classList.add("balon-dogru-bekle");
+            const anlamEtiketi = document.createElement("div");
+            anlamEtiketi.className = "anlam-etiketi";
+            anlamEtiketi.innerText = `= ${hedef.anlam}`;
+            balon.appendChild(anlamEtiketi);
+
+            const kazanilan = hataliDeneme === 0 ? 10 : 5;
+            puan += kazanilan;
+            document.getElementById("puan").innerText = puan;
+
+            const mesaj = document.getElementById("mesajAlani");
+            mesaj.style.color = "#16a34a";
+            mesaj.innerText = `🎈 Harika! "${hedef.kelime}" (${hedef.anlam}) +${kazanilan} puan!`;
+
+            setTimeout(() => {
+                kapsayici.classList.add("balon-patla");
+                patlamaSesiCal();
+            }, 950);
+
+            setTimeout(() => {
+                mevcutIndex++;
+                if (mevcutIndex < sorular.length) soruyuHazirla();
+                else oyunuBitir();
+            }, 1450);
+        } else {
+            hataliDeneme++;
+            sesEfektiCal(false);
+            kapsayici.classList.remove("balon-yanlis");
+            void kapsayici.offsetWidth;
+            kapsayici.classList.add("balon-yanlis");
+
+            const mesaj = document.getElementById("mesajAlani");
+            mesaj.style.color = "#dc2626";
+            mesaj.innerText = "Tekrar dinle ve doğru balonu seç!";
+        }
+    }
+
+    function hedefiDinle() {
+        const hedef = sorular[mevcutIndex];
+        let yedekCalindi = false;
+
         window.speechSynthesis.cancel();
-        const metin = new SpeechSynthesisUtterance(soruListesi[mevcutIndex]);
-        metin.lang = 'en-US';
-        metin.rate = 0.85;
-        window.speechSynthesis.speak(metin);
+        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
+
+        const tarayiciOku = () => {
+            if (yedekCalindi) return;
+            yedekCalindi = true;
+            const metin = new SpeechSynthesisUtterance(hedef.kelime);
+            metin.lang = 'en-US';
+            metin.rate = 0.85;
+            window.speechSynthesis.speak(metin);
+        };
+
+        aktifSes = new Audio(`sesler/${hedef.dosya}.mp3`);
+        aktifSes.onerror = tarayiciOku;
+        aktifSes.play().catch(tarayiciOku);
     }
 
-    function sesCal(dogruMu) {
+    function sesEfektiCal(dogruMu) {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const simdi = ctx.currentTime;
             if (dogruMu) {
-                [587.33, 783.99, 1046.50].forEach((f, i) => {
+                const notalar = [659.25, 783.99, 1046.50];
+                notalar.forEach((frekans, i) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(f, simdi + i * 0.08);
-                    gain.gain.setValueAtTime(0.001, simdi + i * 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.3, simdi + i * 0.08 + 0.02);
-                    gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.08 + 0.35);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(simdi + i * 0.08); osc.stop(simdi + i * 0.08 + 0.4);
+                    osc.frequency.setValueAtTime(frekans, simdi + i * 0.09);
+                    gain.gain.setValueAtTime(0.001, simdi + i * 0.09);
+                    gain.gain.exponentialRampToValueAtTime(0.3, simdi + i * 0.09 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.09 + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(simdi + i * 0.09);
+                    osc.stop(simdi + i * 0.09 + 0.45);
                 });
             } else {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(190, simdi);
-                osc.frequency.linearRampToValueAtTime(140, simdi + 0.22);
+                osc.frequency.setValueAtTime(200, simdi);
+                osc.frequency.linearRampToValueAtTime(150, simdi + 0.22);
                 gain.gain.setValueAtTime(0.22, simdi);
                 gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.25);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(simdi); osc.stop(simdi + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(simdi);
+                osc.stop(simdi + 0.25);
             }
         } catch (e) {}
     }
 
-    function balonTiklandi(kapsayici, secilenKelime, hedefKelime) {
-        if (kilitli) return;
-        const mesaj = document.getElementById("durumMesaji");
-
-        if (secilenKelime === hedefKelime) {
-            kilitli = true;
-            kapsayici.classList.add("patladi");
-            sesCal(true);
-
-            const kazanilan = hatalıDeneme ? 5 : 10;
-            puan += kazanilan;
-            document.getElementById("puanGosterge").innerText = puan;
-
-            mesaj.style.color = "#16a34a";
-            mesaj.innerText = `🎈 Harika! Doğru balonu patlattın (+${kazanilan} puan)`;
-
-            setTimeout(() => {
-                mevcutIndex++;
-                if (mevcutIndex < soruListesi.length) soruyuYukle();
-                else oyunuBitir();
-            }, 950);
-        } else {
-            hatalıDeneme = true;
-            sesCal(false);
-            kapsayici.classList.remove("sarsil");
-            void kapsayici.offsetWidth;
-            kapsayici.classList.add("sarsil");
-
-            mesaj.style.color = "#dc2626";
-            mesaj.innerText = "Tekrar dinle ve doğru balonu seç!";
-        }
+    function patlamaSesiCal() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const simdi = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(420, simdi);
+            osc.frequency.exponentialRampToValueAtTime(60, simdi + 0.14);
+            gain.gain.setValueAtTime(0.35, simdi);
+            gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(simdi);
+            osc.stop(simdi + 0.16);
+        } catch (e) {}
     }
 
     async function oyunuBitir() {
@@ -358,44 +476,52 @@
         document.getElementById("oyunEkrani").classList.add("gizli");
         document.getElementById("sonucEkrani").classList.remove("gizli");
 
-        const bitisSuresi = sureFormatla(gecenSaniye);
-        const maxPuan = soruListesi.length * 10;
-        const yuzde = (puan / maxPuan) * 100;
+        const bitisSuresiMetni = sureFormatla(gecenSaniye);
+        const maksimumPuan = sorular.length * 10;
+        const yuzde = (puan / maksimumPuan) * 100;
 
-        let yildiz = 1;
-        let yorum = "Güzel çaba! Tekrar oynayarak daha yüksek puan alabilirsin.";
-        if (yuzde >= 85) { yildiz = 3; yorum = "Mükemmel! Tam bir süper öğrencisin!"; }
-        else if (yuzde >= 60) { yildiz = 2; yorum = "Çok iyi iş çıkardın!"; }
+        let yildizSayisi = 1;
+        let yildizMesaji = "Güzel çaba! Biraz daha pratikle tüm balonları ilk seferde patlatabilirsin.";
+        if (yuzde >= 80) { yildizSayisi = 3; yildizMesaji = "Mükemmel! Tam bir yıldız öğrencisin!"; }
+        else if (yuzde >= 50) { yildizSayisi = 2; yildizMesaji = "Çok iyi iş çıkardın!"; }
 
-        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildiz) + "☆".repeat(3 - yildiz);
+        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
         document.getElementById("sonucMetni").innerHTML = `
             <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
-            ${yorum}<br>
-            Süre: <strong>${bitisSuresi}</strong> | Puan: <strong>${puan} / ${maxPuan}</strong>
+            ${yildizMesaji}<br>
+            Süre: <strong>${bitisSuresiMetni}</strong> | Puan: <strong>${puan} / ${maksimumPuan}</strong>
         `;
 
+        await googleTabloyaKaydet(maksimumPuan, bitisSuresiMetni, yildizSayisi);
+    }
+
+    async function googleTabloyaKaydet(maksimumPuan, sureMetni, yildizSayisi) {
         const simdi = new Date();
-        const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " +
+        const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " + 
                           simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
         const durumKutusu = document.getElementById("kayitDurumu");
+
+        const veriPaketi = {
+            oyun_adi: OYUNUN_ADI,
+            ogrenci_adi: ogrenciAdi,
+            sinifi: ogrenciSinifi,
+            puan: `${puan}/${maksimumPuan} (${sureMetni})`,
+            yildiz: `${yildizSayisi} Yıldız`,
+            tarih_saat: tarihSaat
+        };
 
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    oyun_adi: OYUNUN_ADI,
-                    ogrenci_adi: ogrenciAdi,
-                    sinifi: ogrenciSinifi,
-                    puan: `${puan}/${maxPuan} (${bitisSuresi})`,
-                    yildiz: `${yildiz} Yıldız`,
-                    tarih_saat: tarihSaat
-                })
+                body: JSON.stringify(veriPaketi)
             });
-            durumKutusu.innerHTML = "✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.";
+            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.`;
         } catch (err) {
-            durumKutusu.innerHTML = "ℹ️ Oyun tamamlandı (Çevrimdışı mod).";
+            durumKutusu.style.background = "#fef3c7";
+            durumKutusu.style.color = "#92400e";
+            durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
         }
     }
 </script>
