@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4th Grade - Countries & Flags Listening Game</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 12px; }
+        
+        .kart-kapsayici {
+            background: white;
+            width: 100%;
+            max-width: 720px;
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 { color: #1e293b; margin-top: 0; }
+        
+        .input-grup { margin-bottom: 15px; text-align: left; max-width: 450px; margin-left: auto; margin-right: auto; }
+        .input-grup label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; }
+        .input-grup input {
+            width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px;
+        }
+        .input-grup input:focus { border-color: #3b82f6; outline: none; }
+
+        .btn {
+            padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; margin: 5px;
+        }
+        .btn-basla { background-color: #2563eb; color: white; width: 100%; max-width: 450px; margin-top: 10px; }
+        .btn-basla:hover { background-color: #1d4ed8; }
+        .btn-anasayfa { background-color: #64748b; color: white; width: 100%; max-width: 450px; margin-top: 8px; }
+        .btn-anasayfa:hover { background-color: #475569; }
+
+        .btn-dinle {
+            background-color: #0ea5e9;
+            color: white;
+            font-size: 20px;
+            padding: 14px 34px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            margin: 10px 0 22px 0;
+        }
+        .btn-dinle:hover { background-color: #0284c7; transform: scale(1.03); }
+
+        .btn-sonraki {
+            background-color: #6366f1;
+            color: white;
+            font-size: 18px;
+            padding: 14px 32px;
+            margin-top: 15px;
+            display: none;
+        }
+        .btn-sonraki:hover { background-color: #4f46e5; }
+
+        .ust-bilgi {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+            font-size: 14px; color: #475569; margin-bottom: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;
+        }
+        .sure-kutusu {
+            background-color: #eff6ff; color: #1d4ed8; font-weight: bold; padding: 6px 12px; border-radius: 8px; border: 1px solid #bfdbfe;
+        }
+        .cikis-link {
+            color: #64748b; text-decoration: none; font-weight: 600; font-size: 13px; padding: 5px 10px; border-radius: 6px; background: #f1f5f9;
+        }
+        .cikis-link:hover { background: #e2e8f0; color: #1e293b; }
+
+        /* 3'lü Bayrak Seçenekleri Alanı */
+        .bayrak-izgara {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 15px 0;
+            min-height: 185px;
+        }
+
+        @media (max-width: 550px) {
+            .bayrak-izgara { grid-template-columns: 1fr; gap: 12px; }
+        }
+
+        .bayrak-kart {
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 14px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
+            transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.2s, background-color 0.2s;
+        }
+
+        .bayrak-kart.gorunur {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .bayrak-kart:hover:not(.kilitli) {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+        }
+
+        .bayrak-kart.dogru {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #15803d;
+        }
+
+        .bayrak-kart.yanlis {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            animation: sarsil 0.45s ease;
+        }
+
+        @keyframes sarsil {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+
+        .bayrak-gorsel {
+            width: 115px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .ulke-millet-etiket {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #15803d;
+            display: none;
+            animation: popIn 0.3s ease;
+        }
+
+        .mesaj-alani {
+            font-size: 22px;
+            font-weight: bold;
+            min-height: 34px;
+            margin: 14px 0 6px 0;
+        }
+
+        .yildiz-kutusu { font-size: 52px; margin: 15px 0; letter-spacing: 8px; animation: popIn 0.5s ease; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .kayit-bilgi { font-size: 13px; color: #15803d; background: #dcfce7; padding: 10px; border-radius: 8px; margin: 15px auto; max-width: 450px; border: 1px solid #86efac; }
+        .gizli { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="kart-kapsayici">
+    <!-- 1. GİRİŞ EKRANI -->
+    <div id="girisEkrani">
+        <h2>🌍 Countries & Flags (4th Grade)</h2>
+        <p style="color: #64748b;">Listen to the country name and click the correct flag!</p>
+        <div class="input-grup">
+            <label for="ogrenciAd">Adın ve Soyadın (Name & Surname):</label>
+            <input type="text" id="ogrenciAd" placeholder="Örn: Zeynep Yılmaz" onkeydown="enterKontrol(event)">
+        </div>
+        <div class="input-grup">
+            <label for="ogrenciSinif">Sınıfın (Class):</label>
+            <input type="text" id="ogrenciSinif" placeholder="Örn: 4-A" onkeydown="enterKontrol(event)">
+        </div>
+        <button class="btn btn-basla" onclick="oyunuBaslat()">Start Game ▶</button>
+        <br>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+    </div>
+
+    <!-- 2. OYUN EKRANI -->
+    <div id="oyunEkrani" class="gizli">
+        <div class="ust-bilgi">
+            <span id="oyuncuBilgi">Öğrenci: -</span>
+            <span>Question: <strong id="soruNo">1</strong> / <strong id="toplamSoru">14</strong></span>
+            <span>Score: <strong id="puanGosterge">0</strong></span>
+            <span class="sure-kutusu">⏱️ <span id="sureGosterge">0 sn</span></span>
+            <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
+        </div>
+
+        <button class="btn btn-dinle" onclick="ulkeyiOku()">🔊 Listen</button>
+
+        <div id="bayrakAlani" class="bayrak-izgara"></div>
+
+        <div id="mesajAlani" class="mesaj-alani"></div>
+
+        <button id="sonrakiBtn" class="btn btn-sonraki" onclick="sonrakiSoru()">Next Question ➔</button>
+    </div>
+
+    <!-- 3. SONUÇ EKRANI -->
+    <div id="sonucEkrani" class="gizli">
+        <h2>🎉 Congratulations!</h2>
+        <div id="yildizAlani" class="yildiz-kutusu"></div>
+        <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
+        <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
+        <button class="btn btn-basla" onclick="location.reload()">Play Again ↻</button>
+        <br>
+        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+    </div>
+</div>
+
+<script>
+    const OYUNUN_ADI = "Countries & Flags (4. Sınıf - Unit 2)";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
+
+    // 14 Ülke, Millet ve Yüksek Çözünürlüklü Vektörel Bayrak Kodları
+    const ulkeVerileri = [
+        { ulke: "Russia", millet: "Russian", dosya: "russia", kod: "1f1f7-1f1fa" },
+        { ulke: "Türkiye", millet: "Turkish", dosya: "turkiye", kod: "1f1f9-1f1f7" },
+        { ulke: "China", millet: "Chinese", dosya: "china", kod: "1f1e8-1f1f3" },
+        { ulke: "France", millet: "French", dosya: "france", kod: "1f1eb-1f1f7" },
+        { ulke: "Italy", millet: "Italian", dosya: "italy", kod: "1f1ee-1f1f9" },
+        { ulke: "Germany", millet: "German", dosya: "germany", kod: "1f1e9-1f1ea" },
+        { ulke: "Greece", millet: "Greek", dosya: "greece", kod: "1f1ec-1f1f7" },
+        { ulke: "The USA", millet: "American", dosya: "the_usa", kod: "1f1fa-1f1f8" },
+        { ulke: "Britain", millet: "British", dosya: "britain", kod: "1f1ec-1f1e7" },
+        { ulke: "Japan", millet: "Japanese", dosya: "japan", kod: "1f1ef-1f1f5" },
+        { ulke: "Iran", millet: "Iranian", dosya: "iran", kod: "1f1ee-1f1f7" },
+        { ulke: "Iraq", millet: "Iraqi", dosya: "iraq", kod: "1f1ee-1f1f6" },
+        { ulke: "Pakistan", millet: "Pakistani", dosya: "pakistan", kod: "1f1f5-1f1f0" },
+        { ulke: "Brazil", millet: "Brazilian", dosya: "brazil", kod: "1f1e7-1f1f7" }
+    ];
+
+    let soruSirasi = [];
+    let mevcutIndex = 0;
+    let puan = 0;
+    let hataYapildiMi = false;
+    let soruTamamlandi = false;
+    let gecenSaniye = 0;
+    let zamanlayici = null;
+    let ogrenciAdi = "";
+    let ogrenciSinifi = "";
+    let aktifSes = null;
+
+    function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
+
+    function diziyiKaristir(dizi) {
+        const kopya = [...dizi];
+        for (let i = kopya.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [kopya[i], kopya[j]] = [kopya[j], kopya[i]];
+        }
+        return kopya;
+    }
+
+    function sureFormatla(toplamSaniye) {
+        if (toplamSaniye < 60) return `${toplamSaniye} sn`;
+        const dakika = Math.floor(toplamSaniye / 60);
+        const saniye = toplamSaniye % 60;
+        return `${dakika} dk ${saniye < 10 ? '0' : ''}${saniye} sn`;
+    }
+
+    function oyunuBaslat() {
+        ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
+        ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
+        if (!ogrenciAdi || !ogrenciSinifi) {
+            alert("Lütfen adını ve sınıfını yaz!");
+            return;
+        }
+
+        document.getElementById("girisEkrani").classList.add("gizli");
+        document.getElementById("oyunEkrani").classList.remove("gizli");
+        document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
+
+        soruSirasi = diziyiKaristir(ulkeVerileri);
+        document.getElementById("toplamSoru").innerText = soruSirasi.length;
+        mevcutIndex = 0;
+        puan = 0;
+
+        sayaciBaslat();
+        soruyuYukle();
+    }
+
+    function sayaciBaslat() {
+        gecenSaniye = 0;
+        document.getElementById("sureGosterge").innerText = "0 sn";
+        zamanlayici = setInterval(() => {
+            gecenSaniye++;
+            document.getElementById("sureGosterge").innerText = sureFormatla(gecenSaniye);
+        }, 1000);
+    }
+
+    function soruyuYukle() {
+        hataYapildiMi = false;
+        soruTamamlandi = false;
+        const dogruUlke = soruSirasi[mevcutIndex];
+
+        document.getElementById("soruNo").innerText = mevcutIndex + 1;
+        document.getElementById("mesajAlani").innerText = "";
+        document.getElementById("sonrakiBtn").style.display = "none";
+
+        const bayrakAlani = document.getElementById("bayrakAlani");
+        bayrakAlani.innerHTML = "";
+
+        // 1 doğru + 2 yanlış ülke seç ve karıştır
+        const digerUlkeler = ulkeVerileri.filter(u => u.ulke !== dogruUlke.ulke);
+        const yanlisSecenekler = diziyiKaristir(digerUlkeler).slice(0, 2);
+        const secenekler = diziyiKaristir([dogruUlke, ...yanlisSecenekler]);
+
+        // Önce ülke adını seslendir
+        ulkeyiOku();
+
+        // Bayrak kartlarını oluştur ve parça parça (sırayla) görünür yap
+        secenekler.forEach((secenek, index) => {
+            const kart = document.createElement("div");
+            kart.className = "bayrak-kart";
+            kart.dataset.ulke = secenek.ulke;
+
+            const yedekSvg = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${secenek.kod}.svg`;
+
+            kart.innerHTML = `
+                <img src="resimler/${secenek.dosya}.png" alt="${secenek.ulke}" class="bayrak-gorsel"
+                     onerror="if(!this.dataset.d){this.dataset.d='jpg';this.src='resimler/${secenek.dosya}.jpg';}else if(this.dataset.d==='jpg'){this.dataset.d='jpeg';this.src='resimler/${secenek.dosya}.jpeg';}else if(this.dataset.d==='jpeg'){this.dataset.d='jfif';this.src='resimler/${secenek.dosya}.jfif';}else if(this.dataset.d==='jfif'){this.dataset.d='svg';this.src='${yedekSvg}';}">
+                <div class="ulke-millet-etiket">${secenek.ulke} - ${secenek.millet}</div>
+            `;
+
+            kart.onclick = () => bayrakSecildi(kart, secenek, dogruUlke);
+            bayrakAlani.appendChild(kart);
+
+            // Parça parça belirme animasyonu (350ms, 700ms, 1050ms)
+            setTimeout(() => {
+                kart.classList.add("gorunur");
+            }, 350 * (index + 1));
+        });
+    }
+
+    function bayrakSecildi(kart, secilen, dogruUlke) {
+        if (soruTamamlandi) return;
+
+        const mesajAlani = document.getElementById("mesajAlani");
+
+        if (secilen.ulke === dogruUlke.ulke) {
+            soruTamamlandi = true;
+            kart.classList.add("dogru");
+            kart.querySelector(".ulke-millet-etiket").style.display = "block";
+
+            // Tüm kartları kilitle
+            document.querySelectorAll(".bayrak-kart").forEach(k => k.classList.add("kilitli"));
+
+            const kazanilan = hataYapildiMi ? 5 : 10;
+            puan += kazanilan;
+            document.getElementById("puanGosterge").innerText = puan;
+
+            mesajAlani.style.color = "#16a34a";
+            mesajAlani.innerText = "✅ Correct!";
+            neseliDingCal(true);
+
+            document.getElementById("sonrakiBtn").style.display = "inline-block";
+        } else {
+            hataYapildiMi = true;
+            kart.classList.remove("yanlis");
+            void kart.offsetWidth; // Sarsılma animasyonunu sıfırla
+            kart.classList.add("yanlis");
+
+            mesajAlani.style.color = "#dc2626";
+            mesajAlani.innerText = "❌ Try again!";
+            neseliDingCal(false);
+
+            // Hafif sarsıldıktan sonra ilk halindeki gibi seçilebilir kalsın
+            setTimeout(() => {
+                kart.classList.remove("yanlis");
+            }, 500);
+        }
+    }
+
+    function sonrakiSoru() {
+        mevcutIndex++;
+        if (mevcutIndex < soruSirasi.length) {
+            soruyuYukle();
+        } else {
+            oyunuBitir();
+        }
+    }
+
+    function ulkeyiOku() {
+        const mevcutUlke = soruSirasi[mevcutIndex];
+        if (!mevcutUlke) return;
+
+        window.speechSynthesis.cancel();
+        if (aktifSes) {
+            aktifSes.pause();
+            aktifSes.currentTime = 0;
+        }
+
+        let yedekCalindi = false;
+        const yedekOku = () => {
+            if (!yedekCalindi) {
+                yedekCalindi = true;
+                tarayiciSesiyleOku(mevcutUlke.ulke);
+            }
+        };
+
+        aktifSes = new Audio(`sesler/${mevcutUlke.dosya}.mp3`);
+        aktifSes.onerror = yedekOku;
+        aktifSes.play().catch(yedekOku);
+    }
+
+    function tarayiciSesiyleOku(metinStr) {
+        const okunacak = metinStr === "Türkiye" ? "Turkey" : metinStr;
+        const metin = new SpeechSynthesisUtterance(okunacak);
+        metin.lang = 'en-US';
+        metin.rate = 0.85;
+        window.speechSynthesis.speak(metin);
+    }
+
+    function neseliDingCal(dogruMu) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const simdi = ctx.currentTime;
+            if (dogruMu) {
+                const notalar = [659.25, 783.99, 1046.50];
+                notalar.forEach((frekans, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(frekans, simdi + i * 0.1);
+                    gain.gain.setValueAtTime(0.001, simdi + i * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.35, simdi + i * 0.1 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, simdi + i * 0.1 + 0.5);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(simdi + i * 0.1);
+                    osc.stop(simdi + i * 0.1 + 0.55);
+                });
+            } else {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, simdi);
+                osc.frequency.linearRampToValueAtTime(150, simdi + 0.22);
+                gain.gain.setValueAtTime(0.22, simdi);
+                gain.gain.exponentialRampToValueAtTime(0.001, simdi + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(simdi);
+                osc.stop(simdi + 0.25);
+            }
+        } catch (e) {}
+    }
+
+    async function oyunuBitir() {
+        clearInterval(zamanlayici);
+        document.getElementById("oyunEkrani").classList.add("gizli");
+        document.getElementById("sonucEkrani").classList.remove("gizli");
+
+        const bitisSuresiMetni = sureFormatla(gecenSaniye);
+        const maksimumPuan = soruSirasi.length * 10;
+        const basariYuzdesi = (puan / maksimumPuan) * 100;
+
+        let yildizSayisi = 1;
+        let yildizMesaji = "Good effort! Keep practicing countries and flags.";
+        if (basariYuzdesi >= 80) {
+            yildizSayisi = 3;
+            yildizMesaji = "Awesome! You know all the countries and flags!";
+        } else if (basariYuzdesi >= 50) {
+            yildizSayisi = 2;
+            yildizMesaji = "Great job! Well done!";
+        }
+
+        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
+        document.getElementById("sonucMetni").innerHTML = `
+            <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
+            ${yildizMesaji}<br>
+            Time: <strong>${bitisSuresiMetni}</strong> | Score: <strong>${puan} / ${maksimumPuan}</strong>
+        `;
+
+        await googleTabloyaKaydet(maksimumPuan, bitisSuresiMetni, yildizSayisi);
+    }
+
+    async function googleTabloyaKaydet(maksimumPuan, sureMetni, yildizSayisi) {
+        const simdi = new Date();
+        const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " + 
+                          simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const durumKutusu = document.getElementById("kayitDurumu");
+
+        const veriPaketi = {
+            oyun_adi: OYUNUN_ADI,
+            ogrenci_adi: ogrenciAdi,
+            sinifi: ogrenciSinifi,
+            puan: `${puan}/${maksimumPuan} (${sureMetni})`,
+            yildiz: `${yildizSayisi} Yıldız`,
+            tarih_saat: tarihSaat
+        };
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(veriPaketi)
+            });
+            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.`;
+        } catch (err) {
+            durumKutusu.style.background = "#fef3c7";
+            durumKutusu.style.color = "#92400e";
+            durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
+        }
+    }
+</script>
+
+</body>
+</html>
