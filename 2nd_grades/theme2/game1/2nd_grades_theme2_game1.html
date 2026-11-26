@@ -35,24 +35,38 @@
         .btn-basla:hover:not(:disabled) { background-color: #1d4ed8; }
         .btn-anasayfa { background-color: #64748b; color: white; width: 100%; margin-top: 8px; }
         .btn-anasayfa:hover { background-color: #475569; }
-        .btn-whatis { background-color: #0ea5e9; color: white; font-size: 18px; padding: 12px 24px; }
-        .btn-whatis:hover:not(:disabled) { background-color: #0284c7; }
         .btn-ses { background-color: #f59e0b; color: white; font-size: 16px; padding: 12px 18px; }
         .btn-ses:hover:not(:disabled) { background-color: #d97706; }
         .btn-sonraki { background-color: #6366f1; color: white; display: none; width: 100%; margin-top: 12px; }
         .btn-sonraki:hover { background-color: #4f46e5; }
 
-        .ust-bilgi { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; color: #64748b; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .ust-bilgi { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; color: #64748b; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .sure-rozet { background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 3px 9px; border-radius: 999px; font-size: 13px; }
         .cikis-link { color: #64748b; text-decoration: none; font-weight: 600; font-size: 13px; padding: 4px 8px; border-radius: 6px; background: #f1f5f9; }
 
-        .aksiyon-satiri { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .soru-baslik-kutusu {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            color: #1e3a8a;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 8px 18px;
+            border-radius: 12px;
+            margin: 0 auto 10px auto;
+        }
+
+        .aksiyon-satiri { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
 
         .sahne-kapsayici {
             position: relative;
             width: 100%;
             max-width: 320px;
             height: 210px;
-            margin: 12px auto 14px auto;
+            margin: 10px auto 14px auto;
             border-radius: 14px;
             overflow: hidden;
             border: 3px solid #cbd5e1;
@@ -72,8 +86,8 @@
             position: absolute;
             inset: 0;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
             gap: 2px;
             pointer-events: none;
         }
@@ -84,7 +98,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 15px;
             font-weight: 800;
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
@@ -97,7 +111,7 @@
         .ipucu-satiri {
             font-size: 13px;
             color: #64748b;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             min-height: 20px;
         }
 
@@ -111,6 +125,7 @@
         @media (max-width: 480px) {
             .secenekler-alani { grid-template-columns: 1fr; }
             .sahne-kapsayici { height: 190px; }
+            .soru-baslik-kutusu { font-size: 20px; }
         }
 
         .secenek-btn {
@@ -170,25 +185,22 @@
             <span id="oyuncuBilgi">Öğrenci: -</span>
             <span>Soru: <strong id="soruNo">1</strong> / <strong id="toplamSoru">0</strong></span>
             <span>Puan: <strong id="puan">0</strong></span>
+            <span id="sureGosterge" class="sure-rozet">0 sn</span>
             <a href="https://anenglishteacher74.github.io/student-games-website/" class="cikis-link">🏠 Ana Sayfa</a>
         </div>
 
+        <div id="whatIsThisBaslik" class="soru-baslik-kutusu">❓ What is this?</div>
+
         <div class="aksiyon-satiri">
-            <button id="whatIsThisBtn" class="btn btn-whatis" onclick="parcaAc()">🔍 What is this?</button>
-            <button id="sesBtn" class="btn btn-ses" onclick="kelimeyiDinle()" title="Dinle">🔊</button>
+            <button id="sesBtn" class="btn btn-ses" onclick="kelimeyiDinle()" title="Dinle">🔊 Dinle</button>
         </div>
 
-        <div id="ipucuAlani" class="ipucu-satiri">Parçalar: 0 / 4 açıldı</div>
+        <div id="ipucuAlani" class="ipucu-satiri">Parçalar: 0 / 16 açıldı</div>
 
         <div class="sahne-kapsayici">
             <img id="esyaResim" class="esya-resmi gizli" alt="Classroom item">
             <div id="esyaSvgKutu" class="esya-svg"></div>
-            <div id="parcaIzgara" class="parca-izgara">
-                <div class="parca-kapak" id="parca-0">?</div>
-                <div class="parca-kapak" id="parca-1">?</div>
-                <div class="parca-kapak" id="parca-2">?</div>
-                <div class="parca-kapak" id="parca-3">?</div>
-            </div>
+            <div id="parcaIzgara" class="parca-izgara"></div>
         </div>
 
         <div id="seceneklerAlani" class="secenekler-alani"></div>
@@ -218,7 +230,9 @@
         "board", "smart board", "scissors", "chalk", "glue"
     ];
 
-    const TOPLAM_PARCA = 4;
+    const TOPLAM_PARCA = 16;
+    const PARCA_SURESI_MS = 1000;
+
     let kelimeListesi = [...VARSAYILAN_KELIMELER];
     let mevcutIndex = 0;
     let puan = 0;
@@ -230,6 +244,57 @@
     let aktifSes = null;
     let sesBaglami = null;
     let hazirSesler = [];
+    let parcaZamanlayici = null;
+    let kalanKapaliParcalar = [];
+    let gecenSaniye = 0;
+    let sureZamanlayici = null;
+
+    function parcaIzgarasiniOlustur() {
+        const izgara = document.getElementById("parcaIzgara");
+        izgara.innerHTML = "";
+        for (let i = 0; i < TOPLAM_PARCA; i++) {
+            const kapak = document.createElement("div");
+            kapak.className = "parca-kapak";
+            kapak.id = "parca-" + i;
+            kapak.innerText = "?";
+            izgara.appendChild(kapak);
+        }
+    }
+
+    parcaIzgarasiniOlustur();
+
+    function sureyiBicimlendir(toplamSn) {
+        if (toplamSn < 60) {
+            return `${toplamSn} sn`;
+        }
+        const dk = Math.floor(toplamSn / 60);
+        const sn = toplamSn % 60;
+        const snYazi = String(sn).padStart(2, "0");
+        return `${dk} dk ${snYazi} sn`;
+    }
+
+    function sureSayaciniGuncelle() {
+        const el = document.getElementById("sureGosterge");
+        if (el) {
+            el.innerText = sureyiBicimlendir(gecenSaniye);
+        }
+    }
+
+    function sureSayaciniBaslat() {
+        sureSayaciniDurdur();
+        sureSayaciniGuncelle();
+        sureZamanlayici = setInterval(() => {
+            gecenSaniye++;
+            sureSayaciniGuncelle();
+        }, 1000);
+    }
+
+    function sureSayaciniDurdur() {
+        if (sureZamanlayici) {
+            clearInterval(sureZamanlayici);
+            sureZamanlayici = null;
+        }
+    }
 
     function sesBaglaminiHazirla() {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -293,6 +358,56 @@
         return kopya;
     }
 
+    function sesAdaylariniSiraylaCal(adayYollar, yedekMetin) {
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+        }
+        if (aktifSes) {
+            aktifSes.pause();
+            aktifSes.currentTime = 0;
+        }
+
+        let yedekCalindi = false;
+        const yedekOku = () => {
+            if (yedekCalindi || !yedekMetin) return;
+            yedekCalindi = true;
+            tarayiciSesiyleOku(yedekMetin);
+        };
+
+        let idx = 0;
+        function deneSonraki() {
+            if (idx >= adayYollar.length) {
+                yedekOku();
+                return;
+            }
+            const yol = adayYollar[idx++];
+            const sesDosyasi = new Audio(yol);
+            sesDosyasi.playsInline = true;
+            aktifSes = sesDosyasi;
+
+            sesDosyasi.onerror = deneSonraki;
+            const oynatPromise = sesDosyasi.play();
+            if (oynatPromise && typeof oynatPromise.catch === "function") {
+                oynatPromise.catch(deneSonraki);
+            }
+        }
+
+        deneSonraki();
+    }
+
+    function whatIsThisSesiniCal() {
+        sesBaglaminiHazirla();
+        const adaylar = [
+            "sesler/what%20is%20this.mp3",
+            "sesler/what is this.mp3",
+            "sesler/what_is_this.mp3",
+            "sesler/what-is-this.mp3",
+            "sesler/whatisthis.mp3"
+        ];
+        sesAdaylariniSiraylaCal(adaylar, "What is this?");
+    }
+
     function oyunuBaslat() {
         ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
@@ -306,12 +421,18 @@
         tarayiciSesleriniYukle();
 
         kelimeListesi = diziyiKaristir(kelimeListesi);
+        mevcutIndex = 0;
+        puan = 0;
+        gecenSaniye = 0;
+        document.getElementById("puan").innerText = puan;
 
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
         document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
         document.getElementById("toplamSoru").innerText = kelimeListesi.length;
-        soruyuHazirla();
+
+        sureSayaciniBaslat();
+        soruyuHazirla(true);
     }
 
     function dosyaVaryasyonlariniOlustur(kelime) {
@@ -388,15 +509,43 @@
         return `<svg viewBox="0 0 200 140"><rect x="35" y="25" width="130" height="90" rx="12" fill="#e0e7ff" stroke="#4f46e5" stroke-width="3"/><text x="100" y="76" text-anchor="middle" font-size="18" font-weight="bold" fill="#1e293b">${k}</text></svg>`;
     }
 
-    function parcalariSifirla() {
+    function otomatikAcilisiDurdur() {
+        if (parcaZamanlayici) {
+            clearInterval(parcaZamanlayici);
+            parcaZamanlayici = null;
+        }
+    }
+
+    function parcalariSifirlaVeOtomatikAc() {
+        otomatikAcilisiDurdur();
         acikParcaSayisi = 0;
+
+        const endeksler = [];
         for (let i = 0; i < TOPLAM_PARCA; i++) {
             const kapak = document.getElementById("parca-" + i);
-            kapak.classList.remove("acik");
+            if (kapak) kapak.classList.remove("acik");
+            endeksler.push(i);
         }
-        const btn = document.getElementById("whatIsThisBtn");
-        btn.disabled = false;
+
+        kalanKapaliParcalar = diziyiKaristir(endeksler);
         guncelleParcaMetni();
+
+        parcaZamanlayici = setInterval(() => {
+            if (soruTamamlandi || kalanKapaliParcalar.length === 0) {
+                otomatikAcilisiDurdur();
+                return;
+            }
+            const siradakiKapakNo = kalanKapaliParcalar.pop();
+            const kapak = document.getElementById("parca-" + siradakiKapakNo);
+            if (kapak && !kapak.classList.contains("acik")) {
+                kapak.classList.add("acik");
+                acikParcaSayisi++;
+                guncelleParcaMetni();
+            }
+            if (kalanKapaliParcalar.length === 0) {
+                otomatikAcilisiDurdur();
+            }
+        }, PARCA_SURESI_MS);
     }
 
     function guncelleParcaMetni() {
@@ -404,26 +553,14 @@
         ipucu.innerText = `Parçalar: ${acikParcaSayisi} / ${TOPLAM_PARCA} açıldı`;
     }
 
-    function parcaAc() {
-        sesBaglaminiHazirla();
-        if (acikParcaSayisi < TOPLAM_PARCA) {
-            const kapak = document.getElementById("parca-" + acikParcaSayisi);
-            if (kapak) kapak.classList.add("acik");
-            acikParcaSayisi++;
-            guncelleParcaMetni();
-        }
-        if (acikParcaSayisi >= TOPLAM_PARCA) {
-            document.getElementById("whatIsThisBtn").disabled = true;
-        }
-    }
-
     function tumParcalariAc() {
+        otomatikAcilisiDurdur();
+        kalanKapaliParcalar = [];
         for (let i = 0; i < TOPLAM_PARCA; i++) {
             const kapak = document.getElementById("parca-" + i);
             if (kapak) kapak.classList.add("acik");
         }
         acikParcaSayisi = TOPLAM_PARCA;
-        document.getElementById("whatIsThisBtn").disabled = true;
         guncelleParcaMetni();
     }
 
@@ -444,7 +581,7 @@
         });
     }
 
-    function soruyuHazirla() {
+    function soruyuHazirla(sesiCal = false) {
         const mesaj = document.getElementById("mesajAlani");
         mesaj.innerText = "";
         denemeSayisi = 0;
@@ -455,40 +592,19 @@
 
         const aktifKelime = kelimeListesi[mevcutIndex];
         resmiYukleVeyaSvgCiz(aktifKelime);
-        parcalariSifirla();
         secenekleriOlustur(aktifKelime);
+        parcalariSifirlaVeOtomatikAc();
+
+        if (sesiCal) {
+            whatIsThisSesiniCal();
+        }
     }
 
     function kelimeyiDinle() {
         sesBaglaminiHazirla();
         const kelime = kelimeListesi[mevcutIndex];
-
-        if ("speechSynthesis" in window) {
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.resume();
-        }
-        if (aktifSes) {
-            aktifSes.pause();
-            aktifSes.currentTime = 0;
-        }
-
-        let yedekCalindi = false;
-        const yedekOku = () => {
-            if (yedekCalindi) return;
-            yedekCalindi = true;
-            tarayiciSesiyleOku(kelime);
-        };
-
         const dosyaAdi = encodeURIComponent(kelime);
-        const sesDosyasi = new Audio(`sesler/${dosyaAdi}.mp3`);
-        sesDosyasi.playsInline = true;
-        aktifSes = sesDosyasi;
-
-        sesDosyasi.onerror = yedekOku;
-        const oynatPromise = sesDosyasi.play();
-        if (oynatPromise && typeof oynatPromise.catch === "function") {
-            oynatPromise.catch(yedekOku);
-        }
+        sesAdaylariniSiraylaCal([`sesler/${dosyaAdi}.mp3`], kelime);
     }
 
     function tarayiciSesiyleOku(kelime) {
@@ -581,22 +697,27 @@
             buton.classList.add("yanlis-secenek");
             buton.disabled = true;
             mesaj.style.color = "#64748b";
-            mesaj.innerText = "Tekrar dene veya 'What is this?' ile parça aç!";
+            mesaj.innerText = "Tekrar dene! Parçalar açılmaya devam ediyor.";
         }
     }
 
     function sonrakiSoru() {
+        sesBaglaminiHazirla();
         mevcutIndex++;
-        if (mevcutIndex < kelimeListesi.length) soruyuHazirla();
+        if (mevcutIndex < kelimeListesi.length) soruyuHazirla(true);
         else oyunuBitir();
     }
 
     async function oyunuBitir() {
+        otomatikAcilisiDurdur();
+        sureSayaciniDurdur();
+
         document.getElementById("oyunEkrani").classList.add("gizli");
         document.getElementById("sonucEkrani").classList.remove("gizli");
 
         const maksimumPuan = kelimeListesi.length * 10;
         const basariYuzdesi = (puan / maksimumPuan) * 100;
+        const toplamSureYazi = sureyiBicimlendir(gecenSaniye);
 
         let yildizSayisi = 1;
         let yildizMesaji = "Güzel çaba! Biraz daha pratikle harika olacaksın.";
@@ -607,13 +728,14 @@
         document.getElementById("sonucMetni").innerHTML = `
             <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
             ${yildizMesaji}<br>
-            Toplam Puanın: <strong>${puan} / ${maksimumPuan}</strong>
+            Toplam Puanın: <strong>${puan} / ${maksimumPuan}</strong><br>
+            Süre: <strong>${toplamSureYazi}</strong>
         `;
 
-        await googleTabloyaKaydet(maksimumPuan, yildizSayisi);
+        await googleTabloyaKaydet(maksimumPuan, yildizSayisi, toplamSureYazi);
     }
 
-    async function googleTabloyaKaydet(maksimumPuan, yildizSayisi) {
+    async function googleTabloyaKaydet(maksimumPuan, yildizSayisi, toplamSureYazi) {
         const simdi = new Date();
         const tarihSaat = simdi.toLocaleDateString('tr-TR') + " " +
                           simdi.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
@@ -624,6 +746,8 @@
             ogrenci_adi: ogrenciAdi,
             sinifi: ogrenciSinifi,
             puan: `${puan} / ${maksimumPuan}`,
+            sure: toplamSureYazi,
+            puan_sure: `${puan} / ${maksimumPuan} / ${toplamSureYazi}`,
             yildiz: `${yildizSayisi} Yıldız`,
             tarih_saat: tarihSaat
         };
