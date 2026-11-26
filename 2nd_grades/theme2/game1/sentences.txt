@@ -1,17 +1,17 @@
-pencil
-book
-notebook
-pencil case
-rubber
-sharpener
-bag
-door
-window
-table
-desk
-computer
-board
-smart board
+this is a pencil
+this is a book
+this is a notebook
+this is a pencil case
+this is a rubber
+this is a sharpener
+this is a bag
+this is a door
+this is a window
+this is a table
+this is a desk
+this is a computer
+this is a board
+this is a smart board
 scissors
-chalk
-glue
+this is a chalk
+this is a glue
