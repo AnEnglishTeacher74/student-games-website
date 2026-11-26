@@ -139,6 +139,30 @@
     let ogrenciSinifi = "";
     let suruklenenKutu = null;
     let aktifSes = null;
+    let sesBaglami = null;
+    let hazirSesler = [];
+
+    function sesBaglaminiHazirla() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        if (!sesBaglami) {
+            sesBaglami = new AudioCtx();
+        }
+        if (sesBaglami.state === "suspended") {
+            sesBaglami.resume().catch(() => {});
+        }
+        return sesBaglami;
+    }
+
+    function tarayiciSesleriniYukle() {
+        if (!("speechSynthesis" in window)) return;
+        hazirSesler = window.speechSynthesis.getVoices() || [];
+    }
+
+    if ("speechSynthesis" in window) {
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.onvoiceschanged = tarayiciSesleriniYukle;
+    }
 
     window.onload = async function() {
         const baslaBtn = document.getElementById("baslaBtn");
@@ -183,14 +207,17 @@
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
         if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
 
+        sesBaglaminiHazirla();
+        tarayiciSesleriniYukle();
+
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
         document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
         document.getElementById("toplamSoru").innerText = cumleListesi.length;
-        soruyuHazirla();
+        soruyuHazirla(true);
     }
 
-    function soruyuHazirla() {
+    function soruyuHazirla(ilkSoruMu = false) {
         const havuz = document.getElementById("havuzAlani");
         const cizgi = document.getElementById("cizgiAlani");
         const mesaj = document.getElementById("mesajAlani");
@@ -216,6 +243,7 @@
 
             kutu.ondragstart = function() { suruklenenKutu = kutu; };
             kutu.onclick = function() {
+                sesBaglaminiHazirla();
                 if (document.getElementById("kontrolBtn").style.display === "none") return;
                 if (kutu.parentElement.id === "havuzAlani") cizgi.appendChild(kutu);
                 else havuz.appendChild(kutu);
@@ -223,7 +251,10 @@
             };
             havuz.appendChild(kutu);
         });
-        setTimeout(cumleyiDinle, 300);
+
+        if (ilkSoruMu) {
+            setTimeout(() => cumleyiDinle(), 200);
+        }
     }
 
     function izinVer(e) { e.preventDefault(); }
@@ -244,8 +275,16 @@
     }
 
     function cumleyiDinle() {
-        window.speechSynthesis.cancel();
-        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
+        sesBaglaminiHazirla();
+
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+        }
+        if (aktifSes) {
+            aktifSes.pause();
+            aktifSes.currentTime = 0;
+        }
 
         let yedekCalindi = false;
         const yedekOku = () => {
@@ -254,24 +293,47 @@
             tarayiciSesiyleOku();
         };
 
-        aktifSes = new Audio(`sesler/${mevcutIndex + 1}.mp3`);
-        aktifSes.onerror = yedekOku;
-        aktifSes.play().catch(yedekOku);
+        const sesDosyasi = new Audio(`sesler/${mevcutIndex + 1}.mp3`);
+        sesDosyasi.playsInline = true;
+        aktifSes = sesDosyasi;
+
+        sesDosyasi.onerror = yedekOku;
+        const oynatPromise = sesDosyasi.play();
+        if (oynatPromise && typeof oynatPromise.catch === "function") {
+            oynatPromise.catch(yedekOku);
+        }
     }
 
     function tarayiciSesiyleOku() {
+        if (!("speechSynthesis" in window)) return;
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.resume();
+
         const metin = new SpeechSynthesisUtterance(cumleListesi[mevcutIndex]);
         metin.lang = 'en-US';
         metin.rate = 0.85;
-        window.speechSynthesis.speak(metin);
+
+        const ingilizceSes = hazirSesler.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+        if (ingilizceSes) {
+            metin.voice = ingilizceSes;
+        }
+
+        setTimeout(() => {
+            window.speechSynthesis.speak(metin);
+        }, 50);
     }
 
-    function neseliDingCal(dogruMu) {
+    async function neseliDingCal(dogruMu) {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = sesBaglaminiHazirla();
+            if (!ctx) return;
+            if (ctx.state === "suspended") {
+                await ctx.resume();
+            }
+
             const simdi = ctx.currentTime;
             if (dogruMu) {
-                const notalar = [659.25, 783.99, 1046.50]; 
+                const notalar = [659.25, 783.99, 1046.50];
                 notalar.forEach((frekans, i) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -302,6 +364,7 @@
     }
 
     function cevabiKontrolEt() {
+        sesBaglaminiHazirla();
         const cizgi = document.getElementById("cizgiAlani");
         const dizilenKutular = Array.from(cizgi.children);
         const dogruKelimeler = kelimelereAyir(cumleListesi[mevcutIndex]);
@@ -342,7 +405,7 @@
 
     function sonrakiSoru() {
         mevcutIndex++;
-        if (mevcutIndex < cumleListesi.length) soruyuHazirla();
+        if (mevcutIndex < cumleListesi.length) soruyuHazirla(false);
         else oyunuBitir();
     }
 
