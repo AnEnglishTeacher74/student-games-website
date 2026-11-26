@@ -87,7 +87,7 @@
             background-color: #dcfce7; border-color: #22c55e; color: #15803d;
         }
 
-	.kart-resim { width: 92%; height: 92%; object-fit: cover; border-radius: 8px; }
+        .kart-resim { width: 92%; height: 92%; object-fit: cover; border-radius: 8px; }
         .kart-emoji { font-size: 42px; line-height: 1; }
         .kart-kelime { font-size: 16px; font-weight: 700; word-break: break-word; line-height: 1.2; }
 
@@ -176,6 +176,30 @@
     let ogrenciAdi = "";
     let ogrenciSinifi = "";
     let aktifSes = null;
+    let sesBaglami = null;
+    let hazirSesler = [];
+
+    function sesBaglaminiHazirla() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        if (!sesBaglami) {
+            sesBaglami = new AudioCtx();
+        }
+        if (sesBaglami.state === "suspended") {
+            sesBaglami.resume().catch(() => {});
+        }
+        return sesBaglami;
+    }
+
+    function tarayiciSesleriniYukle() {
+        if (!("speechSynthesis" in window)) return;
+        hazirSesler = window.speechSynthesis.getVoices() || [];
+    }
+
+    if ("speechSynthesis" in window) {
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.onvoiceschanged = tarayiciSesleriniYukle;
+    }
 
     function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
 
@@ -199,6 +223,9 @@
         ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
         if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
+
+        sesBaglaminiHazirla();
+        tarayiciSesleriniYukle();
 
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
@@ -261,6 +288,7 @@
         if (kilitli) return;
         if (kart.classList.contains("acik") || kart.classList.contains("eslesti")) return;
 
+        sesBaglaminiHazirla();
         kart.classList.add("acik");
         kelimeyiOku(veri.kelime, veri.dosya);
         acikKartlar.push(kart);
@@ -300,34 +328,64 @@
     }
 
     function kelimeyiOku(kelime, dosyaAdi) {
-        window.speechSynthesis.cancel();
+        sesBaglaminiHazirla();
+
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+        }
         if (aktifSes) {
             aktifSes.onended = null;
             aktifSes.onerror = null;
             aktifSes.pause();
             aktifSes.currentTime = 0;
         }
+
         let yedekCalindi = false;
         const yedekOku = () => {
             if (yedekCalindi) return;
             yedekCalindi = true;
             tarayiciSesiyleOku(kelime);
         };
-        aktifSes = new Audio(`sesler/${dosyaAdi}.mp3`);
-        aktifSes.onerror = yedekOku;
-        aktifSes.play().catch(yedekOku);
+
+        const sesDosyasi = new Audio(`sesler/${dosyaAdi}.mp3`);
+        sesDosyasi.playsInline = true;
+        aktifSes = sesDosyasi;
+
+        sesDosyasi.onerror = yedekOku;
+        const oynatPromise = sesDosyasi.play();
+        if (oynatPromise && typeof oynatPromise.catch === "function") {
+            oynatPromise.catch(yedekOku);
+        }
     }
 
     function tarayiciSesiyleOku(kelime) {
+        if (!("speechSynthesis" in window)) return;
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.resume();
+
         const metin = new SpeechSynthesisUtterance(kelime);
         metin.lang = 'en-US';
         metin.rate = 0.85;
-        window.speechSynthesis.speak(metin);
+
+        const ingilizceSes = hazirSesler.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+        if (ingilizceSes) {
+            metin.voice = ingilizceSes;
+        }
+
+        setTimeout(() => {
+            window.speechSynthesis.speak(metin);
+        }, 50);
     }
 
-    function neseliDingCal(dogruMu) {
+    async function neseliDingCal(dogruMu) {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = sesBaglaminiHazirla();
+            if (!ctx) return;
+            if (ctx.state === "suspended") {
+                await ctx.resume();
+            }
+
             const simdi = ctx.currentTime;
             if (dogruMu) {
                 const notalar = [659.25, 783.99, 1046.50];
