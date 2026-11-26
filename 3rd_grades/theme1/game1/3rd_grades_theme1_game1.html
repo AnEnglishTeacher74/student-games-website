@@ -274,6 +274,30 @@
     let ogrenciAdi = "";
     let ogrenciSinifi = "";
     let aktifSes = null;
+    let sesBaglami = null;
+    let hazirSesler = [];
+
+    function sesBaglaminiHazirla() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        if (!sesBaglami) {
+            sesBaglami = new AudioCtx();
+        }
+        if (sesBaglami.state === "suspended") {
+            sesBaglami.resume().catch(() => {});
+        }
+        return sesBaglami;
+    }
+
+    function tarayiciSesleriniYukle() {
+        if (!("speechSynthesis" in window)) return;
+        hazirSesler = window.speechSynthesis.getVoices() || [];
+    }
+
+    if ("speechSynthesis" in window) {
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.onvoiceschanged = tarayiciSesleriniYukle;
+    }
 
     function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
 
@@ -298,6 +322,9 @@
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
         if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
 
+        sesBaglaminiHazirla();
+        tarayiciSesleriniYukle();
+
         sorular = diziyiKaristir(kelimeHavuzu);
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
@@ -305,7 +332,7 @@
         document.getElementById("toplamSoru").innerText = sorular.length;
 
         sayaciBaslat();
-        soruyuHazirla();
+        soruyuHazirla(true);
     }
 
     function sayaciBaslat() {
@@ -317,7 +344,7 @@
         }, 1000);
     }
 
-    function soruyuHazirla() {
+    function soruyuHazirla(ilkSoruMu = false) {
         kilitli = false;
         hataliDeneme = 0;
         const gokyuzu = document.getElementById("gokyuzuAlani");
@@ -350,11 +377,17 @@
             gokyuzu.appendChild(kapsayici);
         });
 
-        setTimeout(hedefiDinle, 350);
+        // İlk soruda "Başla" dokunuşundan hemen sonra çal;
+        // sonraki sorularda iOS ses kilidine takılmamak için "Listen / Dinle" butonuna bırak
+        if (ilkSoruMu) {
+            setTimeout(() => hedefiDinle(), 250);
+        }
     }
 
     function balonaTiklandi(kapsayici, balon, secenek, hedef) {
         if (kilitli) return;
+
+        sesBaglaminiHazirla();
 
         if (secenek.kelime === hedef.kelime) {
             kilitli = true;
@@ -381,7 +414,7 @@
 
             setTimeout(() => {
                 mevcutIndex++;
-                if (mevcutIndex < sorular.length) soruyuHazirla();
+                if (mevcutIndex < sorular.length) soruyuHazirla(false);
                 else oyunuBitir();
             }, 1450);
         } else {
@@ -399,28 +432,66 @@
 
     function hedefiDinle() {
         const hedef = sorular[mevcutIndex];
+        if (!hedef) return;
+
+        sesBaglaminiHazirla();
+
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+        }
+        if (aktifSes) {
+            aktifSes.onended = null;
+            aktifSes.onerror = null;
+            aktifSes.pause();
+            aktifSes.currentTime = 0;
+        }
+
         let yedekCalindi = false;
-
-        window.speechSynthesis.cancel();
-        if (aktifSes) { aktifSes.pause(); aktifSes.currentTime = 0; }
-
         const tarayiciOku = () => {
             if (yedekCalindi) return;
             yedekCalindi = true;
-            const metin = new SpeechSynthesisUtterance(hedef.kelime);
-            metin.lang = 'en-US';
-            metin.rate = 0.85;
-            window.speechSynthesis.speak(metin);
+            tarayiciSesiyleOku(hedef.kelime);
         };
 
-        aktifSes = new Audio(`sesler/${hedef.dosya}.mp3`);
-        aktifSes.onerror = tarayiciOku;
-        aktifSes.play().catch(tarayiciOku);
+        const sesDosyasi = new Audio(`sesler/${hedef.dosya}.mp3`);
+        sesDosyasi.playsInline = true;
+        aktifSes = sesDosyasi;
+
+        sesDosyasi.onerror = tarayiciOku;
+        const oynatPromise = sesDosyasi.play();
+        if (oynatPromise && typeof oynatPromise.catch === "function") {
+            oynatPromise.catch(tarayiciOku);
+        }
     }
 
-    function sesEfektiCal(dogruMu) {
+    function tarayiciSesiyleOku(kelime) {
+        if (!("speechSynthesis" in window)) return;
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.resume();
+
+        const metin = new SpeechSynthesisUtterance(kelime);
+        metin.lang = 'en-US';
+        metin.rate = 0.85;
+
+        const ingilizceSes = hazirSesler.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+        if (ingilizceSes) {
+            metin.voice = ingilizceSes;
+        }
+
+        setTimeout(() => {
+            window.speechSynthesis.speak(metin);
+        }, 50);
+    }
+
+    async function sesEfektiCal(dogruMu) {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = sesBaglaminiHazirla();
+            if (!ctx) return;
+            if (ctx.state === "suspended") {
+                await ctx.resume();
+            }
+
             const simdi = ctx.currentTime;
             if (dogruMu) {
                 const notalar = [659.25, 783.99, 1046.50];
@@ -453,9 +524,14 @@
         } catch (e) {}
     }
 
-    function patlamaSesiCal() {
+    async function patlamaSesiCal() {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = sesBaglaminiHazirla();
+            if (!ctx) return;
+            if (ctx.state === "suspended") {
+                await ctx.resume();
+            }
+
             const simdi = ctx.currentTime;
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
