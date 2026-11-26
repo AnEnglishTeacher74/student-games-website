@@ -106,7 +106,6 @@
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
 
-        /* Yeni soruya geçişte animasyonsuz anında kapatmak için */
         .parca-kapak.aninda-kapat {
             transition: none !important;
             opacity: 1 !important;
@@ -259,6 +258,7 @@
     let gecenSaniye = 0;
     let sureZamanlayici = null;
     let resimYuklemeKimligi = 0;
+    let whatIsThisSiraIndex = 0;
 
     function parcaIzgarasiniOlustur() {
         const izgara = document.getElementById("parcaIzgara");
@@ -280,7 +280,6 @@
             kapak.classList.add("aninda-kapat");
             kapak.classList.remove("acik");
         });
-        // Tarayıcının kapanmış hali boyamasını (reflow) zorla
         void document.getElementById("parcaIzgara").offsetHeight;
         requestAnimationFrame(() => {
             kapaklar.forEach(kapak => {
@@ -351,7 +350,8 @@
             if (!yanit.ok) throw new Error("Dosya bulunamadı");
             const metin = await yanit.text();
             const satirlar = metin
-                .split(/\r?\n|,/)
+                .split(/?
+|,/)
                 .map(s => s.replace(/^\d+[\-\.\)]\s*/, "").trim().toLowerCase())
                 .filter(s => s.length > 0);
             if (satirlar.length > 0) {
@@ -422,15 +422,48 @@
         deneSonraki();
     }
 
+    function siraliWhatIsThisAdaylariniOlustur() {
+        const siraNo = (whatIsThisSiraIndex % 2) + 1;
+        whatIsThisSiraIndex++;
+
+        const birincilAdaylar = siraNo === 1
+            ? [
+                "sesler/what%20is%20this%201.mp3",
+                "sesler/what is this 1.mp3",
+                "sesler/what_is_this_1.mp3",
+                "sesler/what-is-this-1.mp3",
+                "sesler/whatisthis1.mp3"
+            ]
+            : [
+                "sesler/what%20is%20this%202.mp3",
+                "sesler/what is this 2.mp3",
+                "sesler/what_is_this_2.mp3",
+                "sesler/what-is-this-2.mp3",
+                "sesler/whatisthis2.mp3"
+            ];
+
+        const digerAdaylar = siraNo === 1
+            ? [
+                "sesler/what%20is%20this%202.mp3",
+                "sesler/what is this 2.mp3",
+                "sesler/what_is_this_2.mp3",
+                "sesler/what-is-this-2.mp3",
+                "sesler/whatisthis2.mp3"
+            ]
+            : [
+                "sesler/what%20is%20this%201.mp3",
+                "sesler/what is this 1.mp3",
+                "sesler/what_is_this_1.mp3",
+                "sesler/what-is-this-1.mp3",
+                "sesler/whatisthis1.mp3"
+            ];
+
+        return [...birincilAdaylar, ...digerAdaylar];
+    }
+
     function whatIsThisSesiniCal() {
         sesBaglaminiHazirla();
-        const adaylar = [
-            "sesler/what%20is%20this.mp3",
-            "sesler/what is this.mp3",
-            "sesler/what_is_this.mp3",
-            "sesler/what-is-this.mp3",
-            "sesler/whatisthis.mp3"
-        ];
+        const adaylar = siraliWhatIsThisAdaylariniOlustur();
         sesAdaylariniSiraylaCal(adaylar, "What is this?");
     }
 
@@ -448,6 +481,7 @@
 
         kelimeListesi = diziyiKaristir(kelimeListesi);
         mevcutIndex = 0;
+        whatIsThisSiraIndex = 0;
         puan = 0;
         gecenSaniye = 0;
         document.getElementById("puan").innerText = puan;
