@@ -350,8 +350,7 @@
             if (!yanit.ok) throw new Error("Dosya bulunamadı");
             const metin = await yanit.text();
             const satirlar = metin
-                .split(/?
-|,/)
+                .split(/\r?\n|,/)
                 .map(s => s.replace(/^\d+[\-\.\)]\s*/, "").trim().toLowerCase())
                 .filter(s => s.length > 0);
             if (satirlar.length > 0) {
