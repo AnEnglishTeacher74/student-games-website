@@ -245,6 +245,30 @@
     let ogrenciAdi = "";
     let ogrenciSinifi = "";
     let aktifSes = null;
+    let sesBaglami = null;
+    let hazirSesler = [];
+
+    function sesBaglaminiHazirla() {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        if (!sesBaglami) {
+            sesBaglami = new AudioCtx();
+        }
+        if (sesBaglami.state === "suspended") {
+            sesBaglami.resume().catch(() => {});
+        }
+        return sesBaglami;
+    }
+
+    function tarayiciSesleriniYukle() {
+        if (!("speechSynthesis" in window)) return;
+        hazirSesler = window.speechSynthesis.getVoices() || [];
+    }
+
+    if ("speechSynthesis" in window) {
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.onvoiceschanged = tarayiciSesleriniYukle;
+    }
 
     function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
 
@@ -272,6 +296,9 @@
             return;
         }
 
+        sesBaglaminiHazirla();
+        tarayiciSesleriniYukle();
+
         document.getElementById("girisEkrani").classList.add("gizli");
         document.getElementById("oyunEkrani").classList.remove("gizli");
         document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
@@ -282,7 +309,7 @@
         puan = 0;
 
         sayaciBaslat();
-        soruyuYukle();
+        soruyuYukle(true);
     }
 
     function sayaciBaslat() {
@@ -294,7 +321,7 @@
         }, 1000);
     }
 
-    function soruyuYukle() {
+    function soruyuYukle(ilkSoruMu = false) {
         hataYapildiMi = false;
         soruTamamlandi = false;
         const dogruUlke = soruSirasi[mevcutIndex];
@@ -311,8 +338,11 @@
         const yanlisSecenekler = diziyiKaristir(digerUlkeler).slice(0, 2);
         const secenekler = diziyiKaristir([dogruUlke, ...yanlisSecenekler]);
 
-        // Önce ülke adını seslendir
-        ulkeyiOku();
+        // İlk soruda ("Start Game" tıklamasından hemen sonra) seslendir;
+        // sonraki sorularda iOS kısıtlamasına takılmamak için "Listen" butonuna bırak
+        if (ilkSoruMu) {
+            setTimeout(() => ulkeyiOku(), 200);
+        }
 
         // Bayrak kartlarını oluştur ve parça parça (sırayla) görünür yap
         secenekler.forEach((secenek, index) => {
@@ -341,6 +371,7 @@
     function bayrakSecildi(kart, secilen, dogruUlke) {
         if (soruTamamlandi) return;
 
+        sesBaglaminiHazirla();
         const mesajAlani = document.getElementById("mesajAlani");
 
         if (secilen.ulke === dogruUlke.ulke) {
@@ -378,9 +409,10 @@
     }
 
     function sonrakiSoru() {
+        sesBaglaminiHazirla();
         mevcutIndex++;
         if (mevcutIndex < soruSirasi.length) {
-            soruyuYukle();
+            soruyuYukle(false);
         } else {
             oyunuBitir();
         }
@@ -390,36 +422,65 @@
         const mevcutUlke = soruSirasi[mevcutIndex];
         if (!mevcutUlke) return;
 
-        window.speechSynthesis.cancel();
+        sesBaglaminiHazirla();
+
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+        }
         if (aktifSes) {
+            aktifSes.onended = null;
+            aktifSes.onerror = null;
             aktifSes.pause();
             aktifSes.currentTime = 0;
         }
 
         let yedekCalindi = false;
         const yedekOku = () => {
-            if (!yedekCalindi) {
-                yedekCalindi = true;
-                tarayiciSesiyleOku(mevcutUlke.ulke);
-            }
+            if (yedekCalindi) return;
+            yedekCalindi = true;
+            tarayiciSesiyleOku(mevcutUlke.ulke);
         };
 
-        aktifSes = new Audio(`sesler/${mevcutUlke.dosya}.mp3`);
-        aktifSes.onerror = yedekOku;
-        aktifSes.play().catch(yedekOku);
+        const sesDosyasi = new Audio(`sesler/${mevcutUlke.dosya}.mp3`);
+        sesDosyasi.playsInline = true;
+        aktifSes = sesDosyasi;
+
+        sesDosyasi.onerror = yedekOku;
+        const oynatPromise = sesDosyasi.play();
+        if (oynatPromise && typeof oynatPromise.catch === "function") {
+            oynatPromise.catch(yedekOku);
+        }
     }
 
     function tarayiciSesiyleOku(metinStr) {
+        if (!("speechSynthesis" in window)) return;
+        tarayiciSesleriniYukle();
+        window.speechSynthesis.resume();
+
         const okunacak = metinStr === "Türkiye" ? "Turkey" : metinStr;
         const metin = new SpeechSynthesisUtterance(okunacak);
         metin.lang = 'en-US';
         metin.rate = 0.85;
-        window.speechSynthesis.speak(metin);
+
+        const ingilizceSes = hazirSesler.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+        if (ingilizceSes) {
+            metin.voice = ingilizceSes;
+        }
+
+        setTimeout(() => {
+            window.speechSynthesis.speak(metin);
+        }, 50);
     }
 
-    function neseliDingCal(dogruMu) {
+    async function neseliDingCal(dogruMu) {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = sesBaglaminiHazirla();
+            if (!ctx) return;
+            if (ctx.state === "suspended") {
+                await ctx.resume();
+            }
+
             const simdi = ctx.currentTime;
             if (dogruMu) {
                 const notalar = [659.25, 783.99, 1046.50];
