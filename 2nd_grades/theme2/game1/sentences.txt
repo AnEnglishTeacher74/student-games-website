@@ -1,17 +1,17 @@
-this is a pencil
-this is a book
-this is a notebook
-this is a pencil case
-this is a rubber
-this is a sharpener
-this is a bag
-this is a door
-this is a window
-this is a table
-this is a desk
-this is a computer
-this is a board
-this is a smart board
+This is a pencil
+This is a book
+This is a notebook
+This is a pencil case
+This is a rubber
+This is a sharpener
+This is a bag
+This is a door
+This is a window
+This is a table
+This is a desk
+This is a computer
+This is a board
+This is a smart board
 scissors
-this is a chalk
-this is a glue
+This is a chalk
+This is a glue
