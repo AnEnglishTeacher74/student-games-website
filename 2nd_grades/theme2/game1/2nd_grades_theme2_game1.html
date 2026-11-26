@@ -90,6 +90,7 @@
             grid-template-rows: repeat(4, 1fr);
             gap: 2px;
             pointer-events: none;
+            z-index: 2;
         }
 
         .parca-kapak {
@@ -100,7 +101,16 @@
             justify-content: center;
             font-size: 15px;
             font-weight: 800;
+            opacity: 1;
+            transform: scale(1);
             transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        /* Yeni soruya geçişte animasyonsuz anında kapatmak için */
+        .parca-kapak.aninda-kapat {
+            transition: none !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
         }
 
         .parca-kapak.acik {
@@ -248,6 +258,7 @@
     let kalanKapaliParcalar = [];
     let gecenSaniye = 0;
     let sureZamanlayici = null;
+    let resimYuklemeKimligi = 0;
 
     function parcaIzgarasiniOlustur() {
         const izgara = document.getElementById("parcaIzgara");
@@ -262,6 +273,21 @@
     }
 
     parcaIzgarasiniOlustur();
+
+    function tumKapaklariAnindaKapat() {
+        const kapaklar = document.querySelectorAll(".parca-kapak");
+        kapaklar.forEach(kapak => {
+            kapak.classList.add("aninda-kapat");
+            kapak.classList.remove("acik");
+        });
+        // Tarayıcının kapanmış hali boyamasını (reflow) zorla
+        void document.getElementById("parcaIzgara").offsetHeight;
+        requestAnimationFrame(() => {
+            kapaklar.forEach(kapak => {
+                kapak.classList.remove("aninda-kapat");
+            });
+        });
+    }
 
     function sureyiBicimlendir(toplamSn) {
         if (toplamSn < 60) {
@@ -452,31 +478,54 @@
         return adaylar;
     }
 
+    function sahneyiTemizleVeKapat() {
+        resimYuklemeKimligi++;
+        const imgEl = document.getElementById("esyaResim");
+        const svgKutu = document.getElementById("esyaSvgKutu");
+
+        imgEl.onload = null;
+        imgEl.onerror = null;
+        imgEl.removeAttribute("src");
+        imgEl.classList.add("gizli");
+
+        svgKutu.innerHTML = "";
+        svgKutu.classList.add("gizli");
+
+        tumKapaklariAnindaKapat();
+    }
+
     function resmiYukleVeyaSvgCiz(kelime) {
+        const mevcutKimlik = ++resimYuklemeKimligi;
         const imgEl = document.getElementById("esyaResim");
         const svgKutu = document.getElementById("esyaSvgKutu");
         const adaylar = dosyaVaryasyonlariniOlustur(kelime);
-
-        imgEl.classList.add("gizli");
-        svgKutu.classList.remove("gizli");
-        svgKutu.innerHTML = esyaSvgUret(kelime);
+        const yedekSvg = esyaSvgUret(kelime);
 
         let idx = 0;
         function deneSonraki() {
+            if (mevcutKimlik !== resimYuklemeKimligi) return;
+
             if (idx >= adaylar.length) {
                 imgEl.classList.add("gizli");
+                svgKutu.innerHTML = yedekSvg;
                 svgKutu.classList.remove("gizli");
                 return;
             }
+
             const yol = adaylar[idx++];
-            imgEl.onload = function() {
+            const onYukleyici = new Image();
+            onYukleyici.onload = function() {
+                if (mevcutKimlik !== resimYuklemeKimligi) return;
+                svgKutu.innerHTML = "";
                 svgKutu.classList.add("gizli");
+                imgEl.src = yol;
                 imgEl.classList.remove("gizli");
             };
-            imgEl.onerror = function() {
+            onYukleyici.onerror = function() {
+                if (mevcutKimlik !== resimYuklemeKimligi) return;
                 deneSonraki();
             };
-            imgEl.src = yol;
+            onYukleyici.src = yol;
         }
         deneSonraki();
     }
@@ -519,11 +568,10 @@
     function parcalariSifirlaVeOtomatikAc() {
         otomatikAcilisiDurdur();
         acikParcaSayisi = 0;
+        tumKapaklariAnindaKapat();
 
         const endeksler = [];
         for (let i = 0; i < TOPLAM_PARCA; i++) {
-            const kapak = document.getElementById("parca-" + i);
-            if (kapak) kapak.classList.remove("acik");
             endeksler.push(i);
         }
 
@@ -582,6 +630,9 @@
     }
 
     function soruyuHazirla(sesiCal = false) {
+        otomatikAcilisiDurdur();
+        sahneyiTemizleVeKapat();
+
         const mesaj = document.getElementById("mesajAlani");
         mesaj.innerText = "";
         denemeSayisi = 0;
@@ -591,9 +642,9 @@
         document.getElementById("sonrakiBtn").style.display = "none";
 
         const aktifKelime = kelimeListesi[mevcutIndex];
-        resmiYukleVeyaSvgCiz(aktifKelime);
         secenekleriOlustur(aktifKelime);
         parcalariSifirlaVeOtomatikAc();
+        resmiYukleVeyaSvgCiz(aktifKelime);
 
         if (sesiCal) {
             whatIsThisSesiniCal();
@@ -702,6 +753,8 @@
     }
 
     function sonrakiSoru() {
+        otomatikAcilisiDurdur();
+        sahneyiTemizleVeKapat();
         sesBaglaminiHazirla();
         mevcutIndex++;
         if (mevcutIndex < kelimeListesi.length) soruyuHazirla(true);
