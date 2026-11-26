@@ -161,7 +161,7 @@
             <label for="ogrenciSinif">Sınıfın:</label>
             <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A" onkeydown="enterKontrol(event)">
         </div>
-        <button id="baslaBtn" class="btn btn-basla" onclick="oyunuBaslat()" disabled>Yükleniyor...</button>
+        <button id="baslaBtn" class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
         <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 
@@ -219,7 +219,7 @@
     ];
 
     const TOPLAM_PARCA = 4;
-    let kelimeListesi = [];
+    let kelimeListesi = [...VARSAYILAN_KELIMELER];
     let mevcutIndex = 0;
     let puan = 0;
     let denemeSayisi = 0;
@@ -253,25 +253,34 @@
         window.speechSynthesis.onvoiceschanged = tarayiciSesleriniYukle;
     }
 
-    window.onload = async function() {
+    async function kelimeleriYukle() {
         const baslaBtn = document.getElementById("baslaBtn");
         try {
-            const yanit = await fetch('sentences.txt');
+            const yanit = await fetch("sentences.txt", { cache: "no-store" });
             if (!yanit.ok) throw new Error("Dosya bulunamadı");
             const metin = await yanit.text();
             const satirlar = metin
-                .split(/[
-,]+/)
-                .map(s => s.replace(/^\d+[\-\.\)]\s*/, '').trim().toLowerCase())
+                .split(/\r?\n|,/)
+                .map(s => s.replace(/^\d+[\-\.\)]\s*/, "").trim().toLowerCase())
                 .filter(s => s.length > 0);
-            kelimeListesi = satirlar.length > 0 ? satirlar : [...VARSAYILAN_KELIMELER];
+            if (satirlar.length > 0) {
+                kelimeListesi = satirlar;
+            }
         } catch (hata) {
             kelimeListesi = [...VARSAYILAN_KELIMELER];
         } finally {
-            baslaBtn.disabled = false;
-            baslaBtn.innerText = "Başla ▶";
+            if (baslaBtn) {
+                baslaBtn.disabled = false;
+                baslaBtn.innerText = "Başla ▶";
+            }
         }
-    };
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", kelimeleriYukle);
+    } else {
+        kelimeleriYukle();
+    }
 
     function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
 
@@ -288,6 +297,10 @@
         ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
         ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
         if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
+
+        if (!Array.isArray(kelimeListesi) || kelimeListesi.length === 0) {
+            kelimeListesi = [...VARSAYILAN_KELIMELER];
+        }
 
         sesBaglaminiHazirla();
         tarayiciSesleriniYukle();
