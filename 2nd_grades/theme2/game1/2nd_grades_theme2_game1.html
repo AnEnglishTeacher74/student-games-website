@@ -185,8 +185,8 @@
             <label for="ogrenciSinif">Sınıfın:</label>
             <input type="text" id="ogrenciSinif" placeholder="Örn: 2-A" onkeydown="enterKontrol(event)">
         </div>
-        <button id="baslaBtn" class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
-        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+        <button id="baslaBtn" type="button" class="btn btn-basla" onclick="oyunuBaslat()">Başla ▶</button>
+        <button type="button" class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 
     <div id="oyunEkrani" class="gizli">
@@ -201,7 +201,7 @@
         <div id="whatIsThisBaslik" class="soru-baslik-kutusu">❓ What is this?</div>
 
         <div class="aksiyon-satiri">
-            <button id="sesBtn" class="btn btn-ses" onclick="kelimeyiDinle()" title="Dinle">🔊 Dinle</button>
+            <button id="sesBtn" type="button" class="btn btn-ses" onclick="kelimeyiDinle()" title="Dinle">🔊 Dinle</button>
         </div>
 
         <div id="ipucuAlani" class="ipucu-satiri">Parçalar: 0 / 16 açıldı</div>
@@ -216,7 +216,7 @@
 
         <div id="mesajAlani" class="mesaj"></div>
 
-        <button id="sonrakiBtn" class="btn btn-sonraki" onclick="sonrakiSoru()">Sonraki Soru ➔</button>
+        <button id="sonrakiBtn" type="button" class="btn btn-sonraki" onclick="sonrakiSoru()">Sonraki Soru ➔</button>
     </div>
 
     <div id="sonucEkrani" class="gizli">
@@ -224,8 +224,8 @@
         <div id="yildizAlani" class="yildiz-kutusu"></div>
         <p id="sonucMetni" style="font-size: 18px; line-height: 1.6; color: #334155;"></p>
         <div id="kayitDurumu" class="kayit-bilgi">Sonucun öğretmenine gönderiliyor...</div>
-        <button class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
-        <button class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
+        <button type="button" class="btn btn-basla" onclick="location.reload()">Tekrar Oyna ↻</button>
+        <button type="button" class="btn btn-anasayfa" onclick="window.location.href='https://anenglishteacher74.github.io/student-games-website/'">🏠 Ana Sayfaya Dön</button>
     </div>
 </div>
 
@@ -262,6 +262,7 @@
 
     function parcaIzgarasiniOlustur() {
         const izgara = document.getElementById("parcaIzgara");
+        if (!izgara) return;
         izgara.innerHTML = "";
         for (let i = 0; i < TOPLAM_PARCA; i++) {
             const kapak = document.createElement("div");
@@ -280,7 +281,8 @@
             kapak.classList.add("aninda-kapat");
             kapak.classList.remove("acik");
         });
-        void document.getElementById("parcaIzgara").offsetHeight;
+        const izgara = document.getElementById("parcaIzgara");
+        if (izgara) void izgara.offsetHeight;
         requestAnimationFrame(() => {
             kapaklar.forEach(kapak => {
                 kapak.classList.remove("aninda-kapat");
@@ -322,20 +324,26 @@
     }
 
     function sesBaglaminiHazirla() {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return null;
-        if (!sesBaglami) {
-            sesBaglami = new AudioCtx();
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return null;
+            if (!sesBaglami) {
+                sesBaglami = new AudioCtx();
+            }
+            if (sesBaglami.state === "suspended") {
+                sesBaglami.resume().catch(() => {});
+            }
+            return sesBaglami;
+        } catch (err) {
+            return null;
         }
-        if (sesBaglami.state === "suspended") {
-            sesBaglami.resume().catch(() => {});
-        }
-        return sesBaglami;
     }
 
     function tarayiciSesleriniYukle() {
-        if (!("speechSynthesis" in window)) return;
-        hazirSesler = window.speechSynthesis.getVoices() || [];
+        try {
+            if (!("speechSynthesis" in window)) return;
+            hazirSesler = window.speechSynthesis.getVoices() || [];
+        } catch (err) {}
     }
 
     if ("speechSynthesis" in window) {
@@ -345,6 +353,7 @@
 
     async function kelimeleriYukle() {
         const baslaBtn = document.getElementById("baslaBtn");
+        if (baslaBtn) baslaBtn.disabled = false;
         try {
             const yanit = await fetch("sentences.txt", { cache: "no-store" });
             if (!yanit.ok) throw new Error("Dosya bulunamadı");
@@ -372,7 +381,12 @@
         kelimeleriYukle();
     }
 
-    function enterKontrol(e) { if (e.key === "Enter") oyunuBaslat(); }
+    function enterKontrol(e) {
+        if (e && e.key === "Enter") {
+            e.preventDefault();
+            oyunuBaslat();
+        }
+    }
 
     function diziyiKaristir(dizi) {
         const kopya = [...dizi];
@@ -384,14 +398,19 @@
     }
 
     function sesAdaylariniSiraylaCal(adayYollar, yedekMetin) {
-        if ("speechSynthesis" in window) {
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.resume();
-        }
-        if (aktifSes) {
-            aktifSes.pause();
-            aktifSes.currentTime = 0;
-        }
+        try {
+            if ("speechSynthesis" in window) {
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.resume();
+            }
+        } catch (err) {}
+
+        try {
+            if (aktifSes) {
+                aktifSes.pause();
+                aktifSes.currentTime = 0;
+            }
+        } catch (err) {}
 
         let yedekCalindi = false;
         const yedekOku = () => {
@@ -407,14 +426,18 @@
                 return;
             }
             const yol = adayYollar[idx++];
-            const sesDosyasi = new Audio(yol);
-            sesDosyasi.playsInline = true;
-            aktifSes = sesDosyasi;
+            try {
+                const sesDosyasi = new Audio(yol);
+                sesDosyasi.playsInline = true;
+                aktifSes = sesDosyasi;
 
-            sesDosyasi.onerror = deneSonraki;
-            const oynatPromise = sesDosyasi.play();
-            if (oynatPromise && typeof oynatPromise.catch === "function") {
-                oynatPromise.catch(deneSonraki);
+                sesDosyasi.onerror = deneSonraki;
+                const oynatPromise = sesDosyasi.play();
+                if (oynatPromise && typeof oynatPromise.catch === "function") {
+                    oynatPromise.catch(deneSonraki);
+                }
+            } catch (err) {
+                deneSonraki();
             }
         }
 
@@ -425,39 +448,23 @@
         const siraNo = (whatIsThisSiraIndex % 2) + 1;
         whatIsThisSiraIndex++;
 
-        const birincilAdaylar = siraNo === 1
-            ? [
-                "sesler/what%20is%20this%201.mp3",
-                "sesler/what is this 1.mp3",
-                "sesler/what_is_this_1.mp3",
-                "sesler/what-is-this-1.mp3",
-                "sesler/whatisthis1.mp3"
-            ]
-            : [
-                "sesler/what%20is%20this%202.mp3",
-                "sesler/what is this 2.mp3",
-                "sesler/what_is_this_2.mp3",
-                "sesler/what-is-this-2.mp3",
-                "sesler/whatisthis2.mp3"
-            ];
+        const what1 = [
+            "sesler/what%20is%20this%201.mp3",
+            "sesler/what is this 1.mp3",
+            "sesler/what_is_this_1.mp3",
+            "sesler/what-is-this-1.mp3",
+            "sesler/whatisthis1.mp3"
+        ];
 
-        const digerAdaylar = siraNo === 1
-            ? [
-                "sesler/what%20is%20this%202.mp3",
-                "sesler/what is this 2.mp3",
-                "sesler/what_is_this_2.mp3",
-                "sesler/what-is-this-2.mp3",
-                "sesler/whatisthis2.mp3"
-            ]
-            : [
-                "sesler/what%20is%20this%201.mp3",
-                "sesler/what is this 1.mp3",
-                "sesler/what_is_this_1.mp3",
-                "sesler/what-is-this-1.mp3",
-                "sesler/whatisthis1.mp3"
-            ];
+        const what2 = [
+            "sesler/what%20is%20this%202.mp3",
+            "sesler/what is this 2.mp3",
+            "sesler/what_is_this_2.mp3",
+            "sesler/what-is-this-2.mp3",
+            "sesler/whatisthis2.mp3"
+        ];
 
-        return [...birincilAdaylar, ...digerAdaylar];
+        return siraNo === 1 ? [...what1, ...what2] : [...what2, ...what1];
     }
 
     function whatIsThisSesiniCal() {
@@ -467,9 +474,15 @@
     }
 
     function oyunuBaslat() {
-        ogrenciAdi = document.getElementById("ogrenciAd").value.trim();
-        ogrenciSinifi = document.getElementById("ogrenciSinif").value.trim();
-        if (!ogrenciAdi || !ogrenciSinifi) { alert("Lütfen adını ve sınıfını yaz!"); return; }
+        const adInput = document.getElementById("ogrenciAd");
+        const sinifInput = document.getElementById("ogrenciSinif");
+        ogrenciAdi = adInput ? adInput.value.trim() : "";
+        ogrenciSinifi = sinifInput ? sinifInput.value.trim() : "";
+
+        if (!ogrenciAdi || !ogrenciSinifi) {
+            alert("Lütfen adını ve sınıfını yaz!");
+            return;
+        }
 
         if (!Array.isArray(kelimeListesi) || kelimeListesi.length === 0) {
             kelimeListesi = [...VARSAYILAN_KELIMELER];
@@ -483,12 +496,21 @@
         whatIsThisSiraIndex = 0;
         puan = 0;
         gecenSaniye = 0;
-        document.getElementById("puan").innerText = puan;
 
-        document.getElementById("girisEkrani").classList.add("gizli");
-        document.getElementById("oyunEkrani").classList.remove("gizli");
-        document.getElementById("oyuncuBilgi").innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
-        document.getElementById("toplamSoru").innerText = kelimeListesi.length;
+        const puanEl = document.getElementById("puan");
+        if (puanEl) puanEl.innerText = puan;
+
+        const girisEl = document.getElementById("girisEkrani");
+        const oyunEl = document.getElementById("oyunEkrani");
+        const sonucEl = document.getElementById("sonucEkrani");
+        if (girisEl) girisEl.classList.add("gizli");
+        if (sonucEl) sonucEl.classList.add("gizli");
+        if (oyunEl) oyunEl.classList.remove("gizli");
+
+        const oyuncuBilgiEl = document.getElementById("oyuncuBilgi");
+        const toplamSoruEl = document.getElementById("toplamSoru");
+        if (oyuncuBilgiEl) oyuncuBilgiEl.innerText = `${ogrenciAdi} (${ogrenciSinifi})`;
+        if (toplamSoruEl) toplamSoruEl.innerText = kelimeListesi.length;
 
         sureSayaciniBaslat();
         soruyuHazirla(true);
@@ -516,13 +538,17 @@
         const imgEl = document.getElementById("esyaResim");
         const svgKutu = document.getElementById("esyaSvgKutu");
 
-        imgEl.onload = null;
-        imgEl.onerror = null;
-        imgEl.removeAttribute("src");
-        imgEl.classList.add("gizli");
+        if (imgEl) {
+            imgEl.onload = null;
+            imgEl.onerror = null;
+            imgEl.removeAttribute("src");
+            imgEl.classList.add("gizli");
+        }
 
-        svgKutu.innerHTML = "";
-        svgKutu.classList.add("gizli");
+        if (svgKutu) {
+            svgKutu.innerHTML = "";
+            svgKutu.classList.add("gizli");
+        }
 
         tumKapaklariAnindaKapat();
     }
@@ -539,9 +565,11 @@
             if (mevcutKimlik !== resimYuklemeKimligi) return;
 
             if (idx >= adaylar.length) {
-                imgEl.classList.add("gizli");
-                svgKutu.innerHTML = yedekSvg;
-                svgKutu.classList.remove("gizli");
+                if (imgEl) imgEl.classList.add("gizli");
+                if (svgKutu) {
+                    svgKutu.innerHTML = yedekSvg;
+                    svgKutu.classList.remove("gizli");
+                }
                 return;
             }
 
@@ -549,10 +577,14 @@
             const onYukleyici = new Image();
             onYukleyici.onload = function() {
                 if (mevcutKimlik !== resimYuklemeKimligi) return;
-                svgKutu.innerHTML = "";
-                svgKutu.classList.add("gizli");
-                imgEl.src = yol;
-                imgEl.classList.remove("gizli");
+                if (svgKutu) {
+                    svgKutu.innerHTML = "";
+                    svgKutu.classList.add("gizli");
+                }
+                if (imgEl) {
+                    imgEl.src = yol;
+                    imgEl.classList.remove("gizli");
+                }
             };
             onYukleyici.onerror = function() {
                 if (mevcutKimlik !== resimYuklemeKimligi) return;
@@ -631,7 +663,7 @@
 
     function guncelleParcaMetni() {
         const ipucu = document.getElementById("ipucuAlani");
-        ipucu.innerText = `Parçalar: ${acikParcaSayisi} / ${TOPLAM_PARCA} açıldı`;
+        if (ipucu) ipucu.innerText = `Parçalar: ${acikParcaSayisi} / ${TOPLAM_PARCA} açıldı`;
     }
 
     function tumParcalariAc() {
@@ -647,6 +679,7 @@
 
     function secenekleriOlustur(dogruKelime) {
         const alan = document.getElementById("seceneklerAlani");
+        if (!alan) return;
         alan.innerHTML = "";
 
         const digerKelimeler = kelimeListesi.filter(k => k !== dogruKelime);
@@ -655,6 +688,7 @@
 
         ucSecenek.forEach(kelime => {
             const btn = document.createElement("button");
+            btn.type = "button";
             btn.className = "secenek-btn";
             btn.innerText = kelime;
             btn.onclick = () => secenekSecildi(btn, kelime, dogruKelime);
@@ -667,12 +701,14 @@
         sahneyiTemizleVeKapat();
 
         const mesaj = document.getElementById("mesajAlani");
-        mesaj.innerText = "";
+        if (mesaj) mesaj.innerText = "";
         denemeSayisi = 0;
         soruTamamlandi = false;
 
-        document.getElementById("soruNo").innerText = mevcutIndex + 1;
-        document.getElementById("sonrakiBtn").style.display = "none";
+        const soruNoEl = document.getElementById("soruNo");
+        const sonrakiBtn = document.getElementById("sonrakiBtn");
+        if (soruNoEl) soruNoEl.innerText = mevcutIndex + 1;
+        if (sonrakiBtn) sonrakiBtn.style.display = "none";
 
         const aktifKelime = kelimeListesi[mevcutIndex];
         secenekleriOlustur(aktifKelime);
@@ -692,22 +728,26 @@
     }
 
     function tarayiciSesiyleOku(kelime) {
-        if (!("speechSynthesis" in window)) return;
-        tarayiciSesleriniYukle();
-        window.speechSynthesis.resume();
+        try {
+            if (!("speechSynthesis" in window)) return;
+            tarayiciSesleriniYukle();
+            window.speechSynthesis.resume();
 
-        const metin = new SpeechSynthesisUtterance(kelime);
-        metin.lang = 'en-US';
-        metin.rate = 0.85;
+            const metin = new SpeechSynthesisUtterance(kelime);
+            metin.lang = 'en-US';
+            metin.rate = 0.85;
 
-        const ingilizceSes = hazirSesler.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
-        if (ingilizceSes) {
-            metin.voice = ingilizceSes;
-        }
+            const ingilizceSes = hazirSesler.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+            if (ingilizceSes) {
+                metin.voice = ingilizceSes;
+            }
 
-        setTimeout(() => {
-            window.speechSynthesis.speak(metin);
-        }, 50);
+            setTimeout(() => {
+                try {
+                    window.speechSynthesis.speak(metin);
+                } catch (err) {}
+            }, 50);
+        } catch (err) {}
     }
 
     async function neseliDingCal(dogruMu) {
@@ -765,23 +805,32 @@
 
             const kazanilanPuan = denemeSayisi === 1 ? 10 : 5;
             puan += kazanilanPuan;
-            document.getElementById("puan").innerText = puan;
+            const puanEl = document.getElementById("puan");
+            if (puanEl) puanEl.innerText = puan;
 
             buton.classList.add("dogru-secenek");
-            Array.from(document.getElementById("seceneklerAlani").children).forEach(b => {
-                b.disabled = true;
-            });
+            const seceneklerAlani = document.getElementById("seceneklerAlani");
+            if (seceneklerAlani) {
+                Array.from(seceneklerAlani.children).forEach(b => {
+                    b.disabled = true;
+                });
+            }
 
-            mesaj.style.color = "#16a34a";
-            mesaj.innerText = `Harika! Doğru bildin (+${kazanilanPuan} puan).`;
-            document.getElementById("sonrakiBtn").style.display = "inline-block";
+            if (mesaj) {
+                mesaj.style.color = "#16a34a";
+                mesaj.innerText = `Harika! Doğru bildin (+${kazanilanPuan} puan).`;
+            }
+            const sonrakiBtn = document.getElementById("sonrakiBtn");
+            if (sonrakiBtn) sonrakiBtn.style.display = "inline-block";
             kelimeyiDinle();
         } else {
             neseliDingCal(false);
             buton.classList.add("yanlis-secenek");
             buton.disabled = true;
-            mesaj.style.color = "#64748b";
-            mesaj.innerText = "Tekrar dene! Parçalar açılmaya devam ediyor.";
+            if (mesaj) {
+                mesaj.style.color = "#64748b";
+                mesaj.innerText = "Tekrar dene! Parçalar açılmaya devam ediyor.";
+            }
         }
     }
 
@@ -798,8 +847,10 @@
         otomatikAcilisiDurdur();
         sureSayaciniDurdur();
 
-        document.getElementById("oyunEkrani").classList.add("gizli");
-        document.getElementById("sonucEkrani").classList.remove("gizli");
+        const oyunEl = document.getElementById("oyunEkrani");
+        const sonucEl = document.getElementById("sonucEkrani");
+        if (oyunEl) oyunEl.classList.add("gizli");
+        if (sonucEl) sonucEl.classList.remove("gizli");
 
         const maksimumPuan = kelimeListesi.length * 10;
         const basariYuzdesi = (puan / maksimumPuan) * 100;
@@ -810,13 +861,17 @@
         if (basariYuzdesi >= 80) { yildizSayisi = 3; yildizMesaji = "Mükemmel! Tam bir yıldız öğrencisin!"; }
         else if (basariYuzdesi >= 50) { yildizSayisi = 2; yildizMesaji = "Çok iyi iş çıkardın!"; }
 
-        document.getElementById("yildizAlani").innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
-        document.getElementById("sonucMetni").innerHTML = `
-            <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
-            ${yildizMesaji}<br>
-            Toplam Puanın: <strong>${puan} / ${maksimumPuan}</strong><br>
-            Süre: <strong>${toplamSureYazi}</strong>
-        `;
+        const yildizAlani = document.getElementById("yildizAlani");
+        const sonucMetni = document.getElementById("sonucMetni");
+        if (yildizAlani) yildizAlani.innerText = "⭐".repeat(yildizSayisi) + "☆".repeat(3 - yildizSayisi);
+        if (sonucMetni) {
+            sonucMetni.innerHTML = `
+                <strong>${ogrenciAdi}</strong> (${ogrenciSinifi})<br>
+                ${yildizMesaji}<br>
+                Toplam Puanın: <strong>${puan} / ${maksimumPuan}</strong><br>
+                Süre: <strong>${toplamSureYazi}</strong>
+            `;
+        }
 
         await googleTabloyaKaydet(maksimumPuan, yildizSayisi, toplamSureYazi);
     }
@@ -845,11 +900,13 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(veriPaketi)
             });
-            durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.`;
+            if (durumKutusu) durumKutusu.innerHTML = `✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.`;
         } catch (err) {
-            durumKutusu.style.background = "#fef3c7";
-            durumKutusu.style.color = "#92400e";
-            durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
+            if (durumKutusu) {
+                durumKutusu.style.background = "#fef3c7";
+                durumKutusu.style.color = "#92400e";
+                durumKutusu.innerHTML = `ℹ️ Oyun tamamlandı (Çevrimdışı mod).`;
+            }
         }
     }
 </script>
