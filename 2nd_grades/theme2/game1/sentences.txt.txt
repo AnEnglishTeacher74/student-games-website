@@ -1,0 +1,17 @@
+pencil
+book
+notebook
+pencil case
+rubber
+sharpener
+bag
+door
+window
+table
+desk
+computer
+board
+smart board
+scissors
+chalk
+glue
