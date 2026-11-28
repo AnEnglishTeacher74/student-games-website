@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8th Grade · Unit 1: Friendship — Sentence Builder</title>
+  <style>
+    :root {
+      --bg1: #eef2ff;
+      --bg2: #fce7f3;
+      --card: #ffffff;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --error: #dc2626;
+      --error-bg: #fee2e2;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 740px;
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+      padding: 24px;
+    }
+
+    .top-link {
+      display: inline-block;
+      font-size: 0.9rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.65rem;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, background-color 0.2s ease, opacity 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-listen {
+      background: #0ea5e9;
+      color: #fff;
+    }
+
+    .btn-listen:hover {
+      background: #0284c7;
+    }
+
+    .btn-check {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .btn-next {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .clue-box {
+      background: #f8fafc;
+      border-left: 5px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .clue-tr {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .clue-hint {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .answer-zone {
+      min-height: 76px;
+      border: 2px dashed #94a3b8;
+      border-radius: 16px;
+      padding: 12px;
+      background: #fafbff;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .answer-zone.drag-over {
+      border-color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .word-bank {
+      min-height: 70px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      background: #f8fafc;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .word-chip {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 11px;
+      padding: 8px 13px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+      transition: transform 0.12s ease, border-color 0.15s ease;
+    }
+
+    .word-chip:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .word-chip.placed {
+      background: #eef2ff;
+      border-color: var(--primary);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .feedback {
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      display: none;
+      margin-top: 8px;
+    }
+
+    .feedback.ok {
+      display: block;
+      background: var(--success-bg);
+      color: #14532d;
+    }
+
+    .feedback.err {
+      display: block;
+      background: var(--error-bg);
+      color: #7f1d1d;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .stars {
+      font-size: 2.2rem;
+      margin: 10px 0 16px;
+    }
+
+    .error-msg {
+      color: var(--error);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 8px;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- GİRİŞ EKRANI -->
+    <div id="girisEkrani">
+      <a class="top-link" href="https://anenglishteacher74.github.io/student-games-website/">🏠 Ana Sayfa</a>
+      <h1>🤝 8th Grade · Unit 1: Friendship</h1>
+      <p class="subtitle">Cümleyi dinle veya Türkçe ipucuna bak; kelimeleri doğru sırayla dizerek cümleyi kur!</p>
+
+      <div class="form-group">
+        <label for="ogrenciAd">Ad ve Soyad</label>
+        <input type="text" id="ogrenciAd" placeholder="Örn: Zeynep Yılmaz" onkeydown="enterKontrol(event)" />
+      </div>
+
+      <div class="form-group">
+        <label for="ogrenciSinif">Sınıf</label>
+        <input type="text" id="ogrenciSinif" value="8th Grade" placeholder="Örn: 8th Grade / 8-A" onkeydown="enterKontrol(event)" />
+      </div>
+
+      <button class="btn btn-primary" onclick="oyunuBaslat()">Başla ▶</button>
+      <div id="girisHata" class="error-msg"></div>
+    </div>
+
+    <!-- OYUN EKRANI -->
+    <div id="oyunEkrani" class="hidden">
+      <div class="status-bar">
+        <span>👤 <strong id="ekranAd">-</strong> (<span id="ekranSinif">-</span>)</span>
+        <span>📝 Soru: <strong id="soruSayaci">1 / 10</strong></span>
+        <span>⭐ Puan: <strong id="puanSayaci">0</strong></span>
+      </div>
+
+      <div class="clue-box">
+        <div class="clue-tr" id="turkceIpucu">Türkçe anlam yükleniyor...</div>
+        <div class="clue-hint">İpucu: Kelimelere tıklayarak veya sürükleyerek cümle alanına yerleştir.</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-listen" onclick="cumleyiDinle()">🔊 Listen / Dinle</button>
+        <button class="btn btn-secondary" onclick="mevcutSoruyuSifirla()">↺ Temizle</button>
+      </div>
+
+      <div id="cevapAlani" class="answer-zone" ondragover="suruklemeUzerinde(event)" ondragleave="suruklemeAyril(event)" ondrop="cevapAlaninaBirak(event)"></div>
+      <div id="kelimeHavuzu" class="word-bank" ondragover="suruklemeUzerinde(event)" ondrop="havuzaBirak(event)"></div>
+
+      <div class="actions">
+        <button class="btn btn-check" id="kontrolBtn" onclick="cevabiKontrolEt()">Kontrol Et ✔</button>
+        <button class="btn btn-next hidden" id="sonrakiBtn" onclick="sonrakiSoru()">Sonraki Cümle ➔</button>
+      </div>
+
+      <div id="geriBildirim" class="feedback"></div>
+    </div>
+
+    <!-- SONUÇ EKRANI -->
+    <div id="sonucEkrani" class="hidden">
+      <div class="result-box">
+        <h2>🎉 Tebrikler, <span id="sonucAd"></span>!</h2>
+        <p class="subtitle">Friendship ünitesi cümle kurma pratiğini tamamladın.</p>
+        <div class="stars" id="yildizAlani">⭐⭐⭐</div>
+        <p><strong>Toplam Puan:</strong> <span id="sonucPuan">0</span> / <span id="maksPuan">100</span></p>
+        <p><strong>Doğru Cümle:</strong> <span id="dogruSayisi">0</span> / <span id="toplamSoru">10</span></p>
+        <div class="actions" style="justify-content: center; margin-top: 20px;">
+          <button class="btn btn-primary" style="max-width: 220px;" onclick="oyunuYenidenBaslat()">Tekrar Oyna ↻</button>
+          <a class="btn btn-secondary" href="https://anenglishteacher74.github.io/student-games-website/">🏠 Ana Sayfa</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const VARSAYILAN_CUMLER = [
+      { en: "Would you like to come over for dinner?", tr: "Akşam yemeği için bize gelmek ister misin?" },
+      { en: "I would love to, but I have a busy schedule.", tr: "Çok isterim ama yoğun bir programım var." },
+      { en: "True friends always back each other up.", tr: "Gerçek arkadaşlar her zaman birbirine destek olur." },
+      { en: "Why don't we hang out at the cafe after school?", tr: "Okuldan sonra kafede takılmaya ne dersin?" },
+      { en: "I am sorry, I cannot make it tonight.", tr: "Üzgünüm, bu akşam gelemem." },
+      { en: "She is my best buddy because she never tells lies.", tr: "O benim en yakın kankam çünkü asla yalan söylemez." },
+      { en: "Let's go to the concert together this weekend.", tr: "Bu hafta sonu konsere birlikte gidelim." },
+      { en: "Count me in! That sounds awesome.", tr: "Beni de say! Kulağa harika geliyor." },
+      { en: "We have a lot in common and share secrets.", tr: "Birçok ortak noktamız var ve sırlarımızı paylaşırız." },
+      { en: "Thanks for inviting me, I will definitely join.", tr: "Beni davet ettiğin için teşekkürler, kesinlikle katılacağım." }
+    ];
+
+    let cumleler = VARSAYILAN_CUMLER.slice();
+    let soruIndex = 0;
+    let puan = 0;
+    let dogruSayisi = 0;
+    let denemeSayisi = 0;
+    let secilenKelimeler = [];
+    let mevcutKelimeler = [];
+    let audioCtx = null;
+
+    function sesMotorunuHazirla() {
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx && !audioCtx) {
+          audioCtx = new Ctx();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      } catch (e) {}
+    }
+
+    function efektCal(tip) {
+      try {
+        sesMotorunuHazirla();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (tip === "dogru") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else {
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.setValueAtTime(210, now + 0.12);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function cumleyiDinle() {
+      const aktif = cumleler[soruIndex];
+      if (!aktif) return;
+      sesMotorunuHazirla();
+
+      const dosyaSira = (soruIndex % 2) + 1;
+      const yerelSes = new Audio("sesler/" + dosyaSira + ".mp3");
+
+      yerelSes.play().catch(() => {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(aktif.en);
+          utter.lang = "en-US";
+          utter.rate = 0.88;
+          window.speechSynthesis.speak(utter);
+        }
+      });
+    }
+
+    async function cumleleriYukle() {
+      try {
+        const res = await fetch("sentences.txt", { cache: "no-store" });
+        if (!res.ok) return;
+        const text = await res.text();
+        const satirlar = text
+          .split(/\r?\n/)
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        if (satirlar.length > 0) {
+          cumleler = satirlar.map(satir => {
+            const parcalar = satir.split("|");
+            return {
+              en: (parcalar[0] || "").trim(),
+              tr: (parcalar[1] || "Cümleyi doğru sırayla kur.").trim()
+            };
+          }).filter(item => item.en.length > 0);
+        }
+      } catch (e) {
+        cumleler = VARSAYILAN_CUMLER.slice();
+      }
+    }
+
+    function enterKontrol(e) {
+      if (e.key === "Enter") {
+        oyunuBaslat();
+      }
+    }
+
+    function oyunuBaslat() {
+      const adInput = document.getElementById("ogrenciAd");
+      const sinifInput = document.getElementById("ogrenciSinif");
+      const hataEl = document.getElementById("girisHata");
+
+      const ad = adInput.value.trim();
+      const sinif = sinifInput.value.trim();
+
+      if (!ad || !sinif) {
+        hataEl.textContent = "Lütfen ad soyad ve sınıf bilgisini yaz.";
+        return;
+      }
+
+      hataEl.textContent = "";
+      sesMotorunuHazirla();
+
+      document.getElementById("ekranAd").textContent = ad;
+      document.getElementById("ekranSinif").textContent = sinif;
+
+      soruIndex = 0;
+      puan = 0;
+      dogruSayisi = 0;
+
+      document.getElementById("girisEkrani").classList.add("hidden");
+      document.getElementById("sonucEkrani").classList.add("hidden");
+      document.getElementById("oyunEkrani").classList.remove("hidden");
+
+      soruyuYukle();
+    }
+
+    function karistir(dizi) {
+      const kopya = dizi.slice();
+      for (let i = kopya.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const gecici = kopya[i];
+        kopya[i] = kopya[j];
+        kopya[j] = gecici;
+      }
+      return kopya;
+    }
+
+    function soruyuYukle() {
+      const aktif = cumleler[soruIndex];
+      denemeSayisi = 0;
+      secilenKelimeler = [];
+
+      document.getElementById("soruSayaci").textContent = (soruIndex + 1) + " / " + cumleler.length;
+      document.getElementById("puanSayaci").textContent = puan;
+      document.getElementById("turkceIpucu").textContent = aktif.tr;
+
+      const parcalar = aktif.en.split(/\s+/).map((kelime, idx) => ({
+        id: "k_" + soruIndex + "_" + idx,
+        metin: kelime
+      }));
+
+      let karisik = karistir(parcalar);
+      if (karisik.length > 1 && karisik.map(x => x.metin).join(" ") === aktif.en) {
+        karisik = parcalar.slice().reverse();
+      }
+      mevcutKelimeler = karisik;
+
+      const fb = document.getElementById("geriBildirim");
+      fb.className = "feedback";
+      fb.textContent = "";
+      fb.style.display = "none";
+
+      document.getElementById("kontrolBtn").classList.remove("hidden");
+      document.getElementById("sonrakiBtn").classList.add("hidden");
+
+      tahtayiCiz();
+    }
+
+    function tahtayiCiz() {
+      const cevapAlani = document.getElementById("cevapAlani");
+      const havuzAlani = document.getElementById("kelimeHavuzu");
+      cevapAlani.innerHTML = "";
+      havuzAlani.innerHTML = "";
+
+      const seciliIdSet = new Set(secilenKelimeler.map(item => item.id));
+
+      secilenKelimeler.forEach(item => {
+        const chip = document.createElement("div");
+        chip.className = "word-chip placed";
+        chip.textContent = item.metin;
+        chip.draggable = true;
+        chip.onclick = () => kelimeyiCikar(item.id);
+        chip.ondragstart = e => e.dataTransfer.setData("text/plain", item.id);
+        cevapAlani.appendChild(chip);
+      });
+
+      mevcutKelimeler.forEach(item => {
+        if (seciliIdSet.has(item.id)) return;
+        const chip = document.createElement("div");
+        chip.className = "word-chip";
+        chip.textContent = item.metin;
+        chip.draggable = true;
+        chip.onclick = () => kelimeyiEkle(item.id);
+        chip.ondragstart = e => e.dataTransfer.setData("text/plain", item.id);
+        havuzAlani.appendChild(chip);
+      });
+    }
+
+    function kelimeyiEkle(id) {
+      if (!document.getElementById("sonrakiBtn").classList.contains("hidden")) return;
+      if (secilenKelimeler.some(x => x.id === id)) return;
+      const bulunan = mevcutKelimeler.find(x => x.id === id);
+      if (bulunan) {
+        secilenKelimeler.push(bulunan);
+        tahtayiCiz();
+      }
+    }
+
+    function kelimeyiCikar(id) {
+      if (!document.getElementById("sonrakiBtn").classList.contains("hidden")) return;
+      secilenKelimeler = secilenKelimeler.filter(x => x.id !== id);
+      tahtayiCiz();
+    }
+
+    function mevcutSoruyuSifirla() {
+      if (!document.getElementById("sonrakiBtn").classList.contains("hidden")) return;
+      secilenKelimeler = [];
+      tahtayiCiz();
+    }
+
+    function suruklemeUzerinde(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add("drag-over");
+    }
+
+    function suruklemeAyril(e) {
+      e.currentTarget.classList.remove("drag-over");
+    }
+
+    function cevapAlaninaBirak(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove("drag-over");
+      const id = e.dataTransfer.getData("text/plain");
+      if (id) kelimeyiEkle(id);
+    }
+
+    function havuzaBirak(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove("drag-over");
+      const id = e.dataTransfer.getData("text/plain");
+      if (id) kelimeyiCikar(id);
+    }
+
+    function cevabiKontrolEt() {
+      const aktif = cumleler[soruIndex];
+      const kurulan = secilenKelimeler.map(x => x.metin).join(" ").trim();
+      const fb = document.getElementById("geriBildirim");
+
+      if (!kurulan) {
+        fb.className = "feedback err";
+        fb.style.display = "block";
+        fb.textContent = "Önce kelimeleri seçerek cümleyi oluşturmalısın.";
+        return;
+      }
+
+      denemeSayisi += 1;
+
+      if (kurulan === aktif.en) {
+        const kazanilan = denemeSayisi === 1 ? 10 : 5;
+        puan += kazanilan;
+        dogruSayisi += 1;
+        document.getElementById("puanSayaci").textContent = puan;
+
+        fb.className = "feedback ok";
+        fb.style.display = "block";
+        fb.textContent = "Harika! Doğru cümleyi kurdun. (+" + kazanilan + " puan)";
+        efektCal("dogru");
+
+        document.getElementById("kontrolBtn").classList.add("hidden");
+        document.getElementById("sonrakiBtn").classList.remove("hidden");
+      } else {
+        fb.className = "feedback err";
+        fb.style.display = "block";
+        fb.textContent = "Henüz tam doğru değil; kelimelerin sırasını tekrar kontrol et!";
+        efektCal("yanlis");
+      }
+    }
+
+    function sonrakiSoru() {
+      soruIndex += 1;
+      if (soruIndex < cumleler.length) {
+        soruyuYukle();
+      } else {
+        oyunuBitir();
+      }
+    }
+
+    function oyunuBitir() {
+      document.getElementById("oyunEkrani").classList.add("hidden");
+      document.getElementById("sonucEkrani").classList.remove("hidden");
+
+      const ad = document.getElementById("ekranAd").textContent;
+      const maks = cumleler.length * 10;
+      const oran = maks > 0 ? puan / maks : 0;
+
+      let yildiz = "⭐";
+      if (oran >= 0.8) yildiz = "⭐⭐⭐";
+      else if (oran >= 0.5) yildiz = "⭐⭐";
+
+      document.getElementById("sonucAd").textContent = ad;
+      document.getElementById("yildizAlani").textContent = yildiz;
+      document.getElementById("sonucPuan").textContent = puan;
+      document.getElementById("maksPuan").textContent = maks;
+      document.getElementById("dogruSayisi").textContent = dogruSayisi;
+      document.getElementById("toplamSoru").textContent = cumleler.length;
+    }
+
+    function oyunuYenidenBaslat() {
+      soruIndex = 0;
+      puan = 0;
+      dogruSayisi = 0;
+      document.getElementById("sonucEkrani").classList.add("hidden");
+      document.getElementById("oyunEkrani").classList.remove("hidden");
+      soruyuYukle();
+    }
+
+    window.addEventListener("load", () => {
+      cumleleriYukle();
+    });
+  </script>
+</body>
+</html>
