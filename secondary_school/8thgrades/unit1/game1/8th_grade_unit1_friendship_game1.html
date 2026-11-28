@@ -339,6 +339,7 @@
         <div class="stars" id="yildizAlani">⭐⭐⭐</div>
         <p><strong>Toplam Puan:</strong> <span id="sonucPuan">0</span> / <span id="maksPuan">100</span></p>
         <p><strong>Doğru Cümle:</strong> <span id="dogruSayisi">0</span> / <span id="toplamSoru">10</span></p>
+        <p id="kayitDurumu" style="font-size: 0.92rem; color: #15803d; background: #dcfce7; padding: 10px; border-radius: 10px; margin: 14px auto; max-width: 460px; border: 1px solid #86efac;">Sonucun öğretmeninin listesine kaydediliyor...</p>
         <div class="actions" style="justify-content: center; margin-top: 20px;">
           <button class="btn btn-primary" style="max-width: 220px;" onclick="oyunuYenidenBaslat()">Tekrar Oyna ↻</button>
           <a class="btn btn-secondary" href="https://anenglishteacher74.github.io/student-games-website/">🏠 Ana Sayfa</a>
@@ -348,6 +349,9 @@
   </div>
 
   <script>
+    const OYUNUN_ADI = "8th Grade · Unit 1: Friendship — Sentence Builder";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzH1gudYaYuoip_UYOTXQJVUwyXjhoOMm5SlYlvxyzmLz7xg3bp1A3PkX9nNJLlSk4/exec";
+
     const VARSAYILAN_CUMLER = [
       { en: "Would you like to come over for dinner?", tr: "Akşam yemeği için bize gelmek ister misin?" },
       { en: "I would love to, but I have a busy schedule.", tr: "Çok isterim ama yoğun bir programım var." },
@@ -653,17 +657,19 @@
       }
     }
 
-    function oyunuBitir() {
+    async function oyunuBitir() {
       document.getElementById("oyunEkrani").classList.add("hidden");
       document.getElementById("sonucEkrani").classList.remove("hidden");
 
       const ad = document.getElementById("ekranAd").textContent;
+      const sinif = document.getElementById("ekranSinif").textContent;
       const maks = cumleler.length * 10;
       const oran = maks > 0 ? puan / maks : 0;
 
       let yildiz = "⭐";
-      if (oran >= 0.8) yildiz = "⭐⭐⭐";
-      else if (oran >= 0.5) yildiz = "⭐⭐";
+      let yildizSayisi = 1;
+      if (oran >= 0.8) { yildiz = "⭐⭐⭐"; yildizSayisi = 3; }
+      else if (oran >= 0.5) { yildiz = "⭐⭐"; yildizSayisi = 2; }
 
       document.getElementById("sonucAd").textContent = ad;
       document.getElementById("yildizAlani").textContent = yildiz;
@@ -671,6 +677,41 @@
       document.getElementById("maksPuan").textContent = maks;
       document.getElementById("dogruSayisi").textContent = dogruSayisi;
       document.getElementById("toplamSoru").textContent = cumleler.length;
+
+      await googleTabloyaKaydet(ad, sinif, maks, yildizSayisi);
+    }
+
+    async function googleTabloyaKaydet(ogrenciAdi, ogrenciSinifi, maksimumPuan, yildizSayisi) {
+      const simdi = new Date();
+      const tarihSaat = simdi.toLocaleDateString("tr-TR") + " " +
+                        simdi.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      const durumKutusu = document.getElementById("kayitDurumu");
+      durumKutusu.style.background = "#dcfce7";
+      durumKutusu.style.color = "#15803d";
+      durumKutusu.textContent = "Sonucun öğretmeninin listesine kaydediliyor...";
+
+      const veriPaketi = {
+        oyun_adi: OYUNUN_ADI,
+        ogrenci_adi: ogrenciAdi,
+        sinifi: ogrenciSinifi,
+        puan: puan + " / " + maksimumPuan,
+        yildiz: yildizSayisi + " Yıldız",
+        tarih_saat: tarihSaat
+      };
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(veriPaketi)
+        });
+        durumKutusu.textContent = "✅ Tebrikler! Sonucun öğretmeninin listesine başarıyla kaydedildi.";
+      } catch (err) {
+        durumKutusu.style.background = "#fef3c7";
+        durumKutusu.style.color = "#92400e";
+        durumKutusu.textContent = "ℹ️ Oyun tamamlandı (Çevrimdışı mod).";
+      }
     }
 
     function oyunuYenidenBaslat() {
